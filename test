@@ -1,0 +1,7 @@
+#!/bin/bash
+
+VSM="./vsm"
+
+if [ ! -e "$VSM" ]; then
+	echo "vsm does not exist."
+fi
