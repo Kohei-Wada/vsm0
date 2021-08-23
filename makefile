@@ -1,7 +1,7 @@
 TARGET = vsm
 CFLAGS = -g -Wall
 
-OBJ_VSM = vsm.o
+OBJ_VSM = vsm.o instr.o
 SRC_VSM = $(OBJ_VSM: %c = %o)
 
 
