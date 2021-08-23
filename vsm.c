@@ -51,10 +51,8 @@ int vsm_start(vsm_t *v, int start_addr, int trace_flag);
 
 int vsm_back_patching(vsm_t *v, int loc, int target);
 
-
 int vsm_init(vsm_t **v);
 void fsm_free(vsm_t *v);
-
 
 
 static char *scode[] = {
@@ -163,9 +161,10 @@ void vsm_set_instruction(vsm_t *v, op_t op, int flag, int addr)
 int vsm_back_patching(vsm_t *v, int loc, int target)
 {
 	int p;
+	instr_t *i;
 
 	while (loc >= 0) {
-		instr_t *i = vsm_get_iseg(v, loc);
+		i = vsm_get_iseg(v, loc);
 		p = i->addr;
 
 		if (p == loc) {
@@ -200,27 +199,29 @@ int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 	return 0;
 }
 
+
 int vsm_init(vsm_t **v)
 {
 	(*v) = malloc(sizeof(vsm_t));
 	
-	if (!(*v)) {
-		perror("malloc");
-		return 1;
-	}
+	if (!(*v)) 
+		goto vsm_error_malloc;
 
 	(*v)->iseg = malloc(sizeof(instr_t) * ISEG_SIZE);
 	(*v)->dseg = malloc(sizeof(int) * DSEG_SIZE);
 
-	if (!(*v)->iseg || !(*v)->dseg) {
-		perror("malloc");
-		return 1;
-	}
+	if (!(*v)->iseg || !(*v)->dseg) 
+		goto vsm_error_malloc;
 
 	vsm_set_pc(*v, 0);
 	vsm_set_sp(*v, 0);
 
 	return 0;
+
+
+  vsm_error_malloc:
+	perror("mallc");
+	return 1;
 }
 
 
@@ -229,7 +230,6 @@ int vsm_free(vsm_t *v)
 	free(v->iseg);
 	free(v->dseg);
 	free(v);
-
 	return 0;
 }
 
