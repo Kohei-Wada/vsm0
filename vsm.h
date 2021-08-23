@@ -6,45 +6,6 @@
 #define DSEG_SIZE 1000
 #define FRAME_BOTTOM (DSEG_SIZE - 1)
 
-
-typedef enum {
-	NOP,
-	ASSGN,
-	ADD,
-	SUB,
-	MUL,
-	DIV,
-	MOD,
-	CSIGN,
-	AND,
-	OR,
-	NOT,
-	COMP,
-	COPY,
-	PUSH,
-	PUSHI,
-	REMOVE,
-	POP,
-	INC,
-	DEC,
-	SETFR,
-	INCFR,
-	DECFR,
-	JUMP,
-	BLT,
-	BLE,
-	BEQ,
-	BNE,
-	BGE,
-	BGT,
-	CALL,
-	RET,
-	HALT,
-	INPUT,
-	OUTPUT
-} op_t;
-
-
 typedef struct vsm vsm_t;
 
 void vsm_set_debug(vsm_t *v, int debug);
@@ -62,7 +23,6 @@ int vsm_get_freg(vsm_t *v);
 int vsm_start(vsm_t *v, int start_addr, int trace_flag);
 
 //void vms_dump_iseg();
-
 //void vsm_exec_report();
 
 int vsm_back_patching(vsm_t *v, int loc, int target);

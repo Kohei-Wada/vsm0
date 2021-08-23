@@ -1,20 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "vsm.h"
+#include "instr.h"
 
 #define STACK_SIZE 100
-
-typedef struct instr {
-	op_t op;            // operation
-	unsigned int reg;   // register
-	int addr;           // address
-} instr_t;
 
 typedef struct vsm {
 	int pc;          // program counter
 	int sp;          // stack pointer
 	int freg;        // flag register
-	instr_t **iseg;   // instruction segment
+	instr_t **iseg;  // instruction segment
 	int *dseg;       // data segment
 
 	int debug;
@@ -25,7 +20,6 @@ typedef struct vsm {
 	int max_pc;
 	int call_c;
 } vsm_t;
-
 
 
 static void vsm_print_instruction(vsm_t *v, int loc);
@@ -42,121 +36,93 @@ int vsm_get_sp(vsm_t *v);
 void vsm_set_freg(vsm_t *v, int flag);
 int vsm_get_freg(vsm_t *v);
 
-static void vsm_set_iseg(vsm_t *v, int pc);
-static instr_t* vsm_get_iseg(vsm_t *v, int pc);
-
 int vsm_start(vsm_t *v, int start_addr, int trace_flag);
 
-//void vms_dump_iseg();
-//void vsm_exec_report();
+static instr_t* vsm_get_instr(vsm_t *v, int pc);
+void vsm_set_instr(vsm_t *v, int pc, op_t op, int flag, int addr);
 
 int vsm_back_patching(vsm_t *v, int loc, int target);
 
 int vsm_init(vsm_t **v);
 int vsm_free(vsm_t *v);
 
+//void vms_dump_iseg();
+//void vsm_exec_report();
 
 
-static char *scode[] = {
-	"Nop", "  =" , "  +", "  -","  *", "  /", "  %",
-	"  -'", "and", "or", "not", "comp", "copy", "push",
-	"push-i", "remove", "pop", " ++", " --", "setFR",
-	"++FR", "--FR", "jump", "<0 ?", "<=0 ?", "==0 ?",
-	"!=0 ?", ">=0 ?", ">0 ?", "call", "return",
-	"halt", "input", "output",
-};
 
-static void vsm_print_instruction(vsm_t *v, int loc)
+static void vsm_print_instr(vsm_t *v, int loc)
 {
-
-	instr_t *i = vsm_get_iseg(v, loc);
-	unsigned int op = i->op;
-	printf("%d, %s\n", loc, scode[op]);
-
-	switch (op) {
-	case PUSH:
-	case PUSHI:
-	case POP:
-	case SETFR:
-	case INCFR:
-	case DECFR:
-	case JUMP:
-	case BLT:
-	case BLE:
-	case BEQ:
-	case BNE:
-	case BGE:
-	case BGT:
-	case CALL:
-		printf("%6d%4s", i->addr, i->reg ? "[fp]" : " ");
-	default:
-		printf("%10c", ' ');
-	}
-	printf("\n");
+	printf("loc = %d\n", loc);
+	instr_t *i = vsm_get_instr(v, loc);
+	instr_display(i);
 }
+
 
 void vsm_set_debug(vsm_t *v, int debug)
 {
 	v->debug = debug;
 }
 
+
 int vsm_is_debug(vsm_t *v) 
 {
 	return v->debug;
 }
+
 
 void vsm_set_pc(vsm_t *v, int addr)
 {
 	v->pc = addr;
 }
 
+
 int vsm_get_pc(vsm_t *v)
 {
 	return v->pc;
 }
+
 
 void vsm_set_freg(vsm_t *v, int addr)
 {
 	v->freg = addr;
 }
 
+
 int vsm_get_freg(vsm_t *v)
 {
 	return v->freg;
 }
+
 
 void vsm_set_sp(vsm_t *v, int addr)
 {
 	v->sp = addr;
 }
 
+
 int vsm_get_sp(vsm_t *v)
 {
 	return v->sp;
 }
 
-static void vsm_set_iseg(vsm_t *v, int pc)
-{
 
-}
-
-static instr_t* vsm_get_iseg(vsm_t *v, int pc)
+static instr_t* vsm_get_instr(vsm_t *v, int pc)
 {
 	return v->iseg[pc];
 }
 
 
-void vsm_set_instruction(vsm_t *v, op_t op, int flag, int addr)
+void vsm_set_instr(vsm_t *v, int pc, op_t op, int flag, int addr)
 {
-	int pc = vsm_get_pc(v);
-	instr_t *i = vsm_get_iseg(v, pc);
+	instr_t *i = vsm_get_instr(v, pc);
 
-	i->op = op;
-	i->reg = flag;
-	i->addr = addr;
+	instr_set_op(i, op);
+	instr_set_reg(i, flag);
+	instr_set_addr(i, addr);
 
 	if (vsm_is_debug(v))
-		vsm_print_instruction(v, pc);
+		vsm_print_instr(v, pc);
 }
 
 
@@ -166,35 +132,57 @@ int vsm_back_patching(vsm_t *v, int loc, int target)
 	instr_t *i;
 
 	while (loc >= 0) {
-		i = vsm_get_iseg(v, loc);
-		p = i->addr;
+		i = vsm_get_instr(v, loc);
+		p = instr_get_addr(i);
 
 		if (p == loc) {
 			printf("trying to rewrite self address part at loc. %d\n", p);
 			return 0;
 		}
-		i->addr = target;
+
+		instr_set_addr(i, target);
 		loc = p;
 	}
 	return 0;
 }
 
 
+static int vsm_handle_oparations(vsm_t *v, op_t op)
+{
+
+	return 0;
+
+}
+
+
+
 int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 {
+	instr_t *i;
+	op_t op;
+	int addr;
+
 	vsm_set_pc(v, start_addr);
 	vsm_set_sp(v, 0);
 	vsm_set_freg(v, 0);
 
-	int sp = vsm_get_sp(v);
-	int pc = vsm_get_pc(v);
+	int sp = 0;
+	int pc = start_addr;
 
-	while (0) {
+	while (1) {
 
 		if (sp >= STACK_SIZE || sp < 0) {
 			fprintf(stderr, "Illegal stack pointer %d\n", sp); 
 			return -1;
 		}
+		
+		i    = vsm_get_instr(v, sp);
+		op   = instr_get_op(i);
+		addr = instr_get_addr(i);
+
+		vsm_handle_oparations(v, op);
+
+		break;
 
 	}
 
@@ -209,7 +197,12 @@ int vsm_init(vsm_t **v)
 	if (!(*v)) 
 		goto vsm_error_malloc;
 
-	(*v)->iseg = malloc(sizeof(instr_t) * ISEG_SIZE);
+	(*v)->iseg = malloc(sizeof(instr_t*) * ISEG_SIZE);
+
+	for (int i = 0; i < ISEG_SIZE - 1; ++i)
+		if (instr_init(&(*v)->iseg[i]))
+			goto vsm_error_iseg_init;
+
 	(*v)->dseg = malloc(sizeof(int) * DSEG_SIZE);
 
 	if (!(*v)->iseg || !(*v)->dseg) 
@@ -222,14 +215,22 @@ int vsm_init(vsm_t **v)
 
 
   vsm_error_malloc:
+
 	perror("mallc");
+
+  vsm_error_iseg_init:
+
 	return 1;
 }
 
 
 int vsm_free(vsm_t *v)
 {
+	for (int i = 0; i < ISEG_SIZE - 1; ++i)
+		free(v->iseg[i]);
+
 	free(v->iseg);
+
 	free(v->dseg);
 	free(v);
 	return 0;

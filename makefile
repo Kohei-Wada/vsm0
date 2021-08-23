@@ -1,12 +1,12 @@
 TARGET = vsm
 CFLAGS = -g -Wall
 
-OBJ_VSM = vsm.o instr.o
-SRC_VSM = $(OBJ_VSM: %c = %o)
+OBJS_VSM = vsm.o instr.o
+SRCS_VSM = $(OBJ_VSM: %c = %o)
 
 
-$(TARGET) : $(OBJ_VSM)
-	$(CC) -o $(TARGET) $(CFLAGS) $<
+$(TARGET) : $(OBJS_VSM)
+	$(CC) -o $(TARGET) $(CFLAGS) $(OBJS_VSM)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
