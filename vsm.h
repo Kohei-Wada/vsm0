@@ -44,6 +44,4 @@ typedef enum {
 	OUTPUT
 } op_t;
 
-
-
 #endif 

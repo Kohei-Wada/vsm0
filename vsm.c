@@ -5,11 +5,10 @@
 #define STACK_SIZE 100
 
 typedef struct instr {
-	unsigned int op;    // operation
+	op_t op;            // operation
 	unsigned int reg;   // register
 	int addr;           // address
 } instr_t;
-
 
 typedef struct vsm {
 	int pc;          // program counter
@@ -42,7 +41,6 @@ int vsm_get_sp(vsm_t *v);
 void vsm_set_freg(vsm_t *v, int flag);
 int vsm_get_freg(vsm_t *v);
 
-
 int vsm_start(vsm_t *v, int start_addr, int trace_flag);
 
 //void vms_dump_iseg();
@@ -52,7 +50,7 @@ int vsm_start(vsm_t *v, int start_addr, int trace_flag);
 int vsm_back_patching(vsm_t *v, int loc, int target);
 
 int vsm_init(vsm_t **v);
-void fsm_free(vsm_t *v);
+int vsm_free(vsm_t *v);
 
 
 static char *scode[] = {
