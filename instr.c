@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "instr.h"
 
 
@@ -38,5 +39,17 @@ void instr_set_addr(instr_t *i, int addr)
 int instr_get_addr(instr_t *i)
 {
 	return i->addr;
+}
+
+
+int instr_init(instr_t **i)
+{
+	*i = malloc(sizeof(instr_t));
+	return 0;
+}
+
+void instr_free(instr_t *i)
+{
+	free(i);
 }
 

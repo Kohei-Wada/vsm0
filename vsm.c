@@ -27,6 +27,7 @@ typedef struct vsm {
 } vsm_t;
 
 
+
 static void vsm_print_instruction(vsm_t *v, int loc);
 
 void vsm_set_debug(vsm_t *v, int debug);
@@ -51,6 +52,7 @@ int vsm_back_patching(vsm_t *v, int loc, int target);
 
 int vsm_init(vsm_t **v);
 int vsm_free(vsm_t *v);
+
 
 
 static char *scode[] = {
