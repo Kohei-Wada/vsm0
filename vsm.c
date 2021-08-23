@@ -14,6 +14,8 @@ typedef struct vsm {
 	instr_t *iseg;   // instruction segment
 	int *dseg;       // data segment
 
+	int debug;
+
 	int ins_count;
 	int max_sd;
 	int min_fr;
@@ -21,6 +23,11 @@ typedef struct vsm {
 	int call_c;
 } vsm_t;
 
+
+static void vsm_print_instruction(vsm_t *v, int loc);
+
+void vsm_set_debug(vsm_t *v, int debug);
+int vsm_is_debug(vsm_t *v);
 
 void vsm_set_pcounter(vsm_t *v, int addr);
 int vsm_get_pcounter(vsm_t *v);
@@ -34,11 +41,8 @@ int vsm_start(vsm_t *v, int start_addr, int trace_flag);
 
 int vsm_back_patching(vsm_t *v, int loc, int target);
 
-
-
 int vsm_init(vsm_t **v);
 void fsm_free(vsm_t *v);
-
 
 
 static char *scode[] = {
@@ -50,6 +54,42 @@ static char *scode[] = {
 	"halt", "input", "output",
 };
 
+static void vsm_print_instruction(vsm_t *v, int loc)
+{
+	int op = v->iseg[loc].op;
+	printf("%d, %s\n", loc, scode[op]);
+
+	switch (op) {
+	case PUSH:
+	case PUSHI:
+	case POP:
+	case SETFR:
+	case INCFR:
+	case DECFR:
+	case JUMP:
+	case BLT:
+	case BLE:
+	case BEQ:
+	case BNE:
+	case BGE:
+	case BGT:
+	case CALL:
+		printf("%6d%4s", v->iseg[loc].addr, v->iseg[loc].reg ? "[fp]" : " ");
+	default:
+		printf("%10c", ' ');
+	}
+}
+
+
+void vsm_set_debug(vsm_t *v, int debug)
+{
+	v->debug = debug;
+}
+
+int vsm_is_debug(vsm_t *v) 
+{
+	return v->debug;
+}
 
 void vsm_set_pcounter(vsm_t *v, int addr)
 {
@@ -62,12 +102,12 @@ int vsm_get_pcounter(vsm_t *v)
 }
 
 
-void vsm_set_instruction(vsm_t *v, op_t op, int f, int addr)
+void vsm_set_instruction(vsm_t *v, op_t op, int flag, int addr)
 {
 	int pc = v->pcounter;
 
 	v->iseg[pc].op = op;
-	v->iseg[pc].reg = f;
+	v->iseg[pc].reg = flag;
 	v->iseg[pc].addr = addr;
 }
 
@@ -82,22 +122,11 @@ int vsm_back_patching(vsm_t *v, int loc, int target)
 			printf("trying to rewrite self address part at loc. %d\n", p);
 			return 0;
 		}
-
 		v->iseg[loc].addr = target;
 		loc = p;
 	}
 	return 0;
 }
-
-
-static void vsm_print_instruction(vsm_t *v, int loc)
-{
-	int op = v->iseg[loc].op;
-	printf("%d, %s\n", loc, scode[op]);
-}
-
-
-
 
 
 int vsm_start(vsm_t *v, int start_addr, int trace_sw)
@@ -134,6 +163,9 @@ int main(void)
 	vsm_t *vsm;
 
 	vsm_init(&vsm);
+	vsm_set_debug(vsm, 1);
+	printf("vsm_is_debug = %d\n", vsm_is_debug(vsm));
+
 	vsm_start(vsm, 0, 0);
 	vsm_free(vsm);
 
