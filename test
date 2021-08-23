@@ -4,4 +4,7 @@ VSM="./vsm"
 
 if [ ! -e "$VSM" ]; then
 	echo "vsm does not exist."
+else
+	"$VSM"
 fi
+

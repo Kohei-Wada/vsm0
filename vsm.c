@@ -2,15 +2,19 @@
 #include <stdlib.h>
 #include "vsm.h"
 
+#define STACK_SIZE 100
+
 typedef struct instr {
 	unsigned int op;    // operation
 	unsigned int reg;   // register
 	int addr;           // address
 } instr_t;
 
+
 typedef struct vsm {
-	int pcounter;    // program counter
+	int pc;          // program counter
 	int sp;          // stack pointer
+	int freg;        // flag register
 	instr_t *iseg;   // instruction segment
 	int *dseg;       // data segment
 
@@ -29,12 +33,18 @@ static void vsm_print_instruction(vsm_t *v, int loc);
 void vsm_set_debug(vsm_t *v, int debug);
 int vsm_is_debug(vsm_t *v);
 
-void vsm_set_pcounter(vsm_t *v, int addr);
-int vsm_get_pcounter(vsm_t *v);
+void vsm_set_pc(vsm_t *v, int addr);
+int vsm_get_pc(vsm_t *v);
+
+void vsm_set_sp(vsm_t *v, int addr);
+int vsm_get_sp(vsm_t *v);
+
+void vsm_set_freg(vsm_t *v, int flag);
+int vsm_get_freg(vsm_t *v);
+
 
 int vsm_start(vsm_t *v, int start_addr, int trace_flag);
 
-//void vsm_set_iseg();
 //void vms_dump_iseg();
 
 //void vsm_exec_report();
@@ -78,6 +88,7 @@ static void vsm_print_instruction(vsm_t *v, int loc)
 	default:
 		printf("%10c", ' ');
 	}
+	printf("\n");
 }
 
 
@@ -91,25 +102,50 @@ int vsm_is_debug(vsm_t *v)
 	return v->debug;
 }
 
-void vsm_set_pcounter(vsm_t *v, int addr)
+
+void vsm_set_pc(vsm_t *v, int addr)
 {
-	v->pcounter = addr;
+	v->pc = addr;
 }
 
-int vsm_get_pcounter(vsm_t *v)
+int vsm_get_pc(vsm_t *v)
 {
-	return v->pcounter;
+	return v->pc;
+}
+
+void vsm_set_freg(vsm_t *v, int addr)
+{
+	v->freg = addr;
+}
+
+int vsm_get_freg(vsm_t *v)
+{
+	return v->freg;
+}
+
+void vsm_set_sp(vsm_t *v, int addr)
+{
+	v->sp = addr;
+}
+
+int vsm_get_sp(vsm_t *v)
+{
+	return v->sp;
 }
 
 
 void vsm_set_instruction(vsm_t *v, op_t op, int flag, int addr)
 {
-	int pc = v->pcounter;
+	int pc = vsm_get_pc(v); 
 
-	v->iseg[pc].op = op;
-	v->iseg[pc].reg = flag;
+	v->iseg[pc].op   = op;
+	v->iseg[pc].reg  = flag;
 	v->iseg[pc].addr = addr;
+
+	if (vsm_is_debug(v))
+		vsm_print_instruction(v, pc);
 }
+
 
 int vsm_back_patching(vsm_t *v, int loc, int target)
 {
@@ -131,6 +167,22 @@ int vsm_back_patching(vsm_t *v, int loc, int target)
 
 int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 {
+	vsm_set_pc(v, start_addr);
+	vsm_set_sp(v, 0);
+	vsm_set_freg(v, 0);
+
+	int sp = vsm_get_sp(v);
+	int pc = vsm_get_pc(v);
+
+	while (0) {
+
+		if (sp >= STACK_SIZE || sp < 0) {
+			fprintf(stderr, "Illegal stack pointer %d\n", sp); 
+			return -1;
+		}
+
+	}
+
 	return 0;
 }
 
@@ -143,8 +195,8 @@ int vsm_init(vsm_t **v)
 	if (!(*v)->iseg || !(*v)->dseg) 
 		return 1;
 
-	(*v)->pcounter = 0;
-	(*v)->sp       = 0;
+	(*v)->pc = 0;
+	(*v)->sp = 0;
 
 	return 0;
 }
