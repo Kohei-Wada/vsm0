@@ -36,7 +36,7 @@ int vsm_get_sp(vsm_t *v);
 void vsm_set_freg(vsm_t *v, int flag);
 int vsm_get_freg(vsm_t *v);
 
-static void vsm_set_dseg(vms_t *v, int val, int addr);
+static void vsm_set_dseg(vsm_t *v, int val, int addr);
 static int vsm_get_dseg(vsm_t *v, int addr);
 
 int vsm_start(vsm_t *v, int start_addr, int trace_flag);
@@ -144,7 +144,7 @@ int vsm_get_sp(vsm_t *v)
 	return v->sp;
 }
 
-static void vsm_set_dseg(vms_t *v, int val, int addr)
+static void vsm_set_dseg(vsm_t *v, int val, int addr)
 {
 	v->dseg[addr] = val;
 }

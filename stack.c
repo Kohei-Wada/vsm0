@@ -23,19 +23,28 @@ int stack_push(stack_t *s)
 }
 
 
-int stack_init(stack_t **s, sp_t **sp)
+int stack_get_sp(stack_t *s)
+{
+	return s->sp;
+}
+
+
+void stack_set_sp(stack_t *s, int val)
+{
+	s->sp = val;
+}
+
+
+int stack_init(stack_t **s)
 {
 	*s = malloc(sizeof(stack_t));
-	*sp = malloc(sizeof(sp_t));
 
-	if (!(*s) || !(*sp)) 
+	if (!(*s)) 
 		return 1;
 
 	(*s)->sp = 0;
 	(*s)->stack_size = STACK_SIZE;
 	(*s)->array = malloc(sizeof(int) * STACK_SIZE);
-
-	*sp = 0;
 
 	return 0;
 }
