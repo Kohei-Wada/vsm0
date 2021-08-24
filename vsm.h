@@ -1,6 +1,9 @@
 #ifndef _VSM_H_
 #define _VSM_H_
 
+#include "stack.h"
+#include "instr.h"
+
 
 #define ISEG_SIZE 1000
 #define DSEG_SIZE 1000
@@ -21,6 +24,9 @@ void vsm_set_freg(vsm_t *v, int flag);
 int vsm_get_freg(vsm_t *v);
 
 int vsm_start(vsm_t *v, int start_addr, int trace_flag);
+
+static instr_t* vsm_get_instr(vsm_t *v, int pc);
+void vsm_set_instr(vsm_t *v, int pc, op_t op, int flag, int addr);
 
 //void vms_dump_iseg();
 //void vsm_exec_report();

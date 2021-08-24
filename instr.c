@@ -57,6 +57,9 @@ static char *scode[] = {
 void instr_display(instr_t *i)
 {
 	unsigned int op = instr_get_op(i); 
+	int addr = instr_get_addr(i);
+
+	printf("%5d  %-8s", addr, scode[op]);
 
 	switch (op) {
 	case PUSH:

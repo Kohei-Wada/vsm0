@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "stack.h"
 
 
@@ -26,7 +27,7 @@ int stack_pop(stack_t *s)
 	int sp = stack_get_sp(s);
 	int retval = s->array[sp];
 	stack_set_sp(s, sp - 1);
-
+ 
 	return retval;
 }
 
