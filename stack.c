@@ -9,20 +9,6 @@ typedef struct stack {
 } stack_t;
 
 
-int stack_pop(stack_t *s)
-{
-	int *stack = s->array;
-	return 0;
-}
-
-
-int stack_push(stack_t *s)
-{
-	int *stack = s->array;
-	return 0;
-}
-
-
 int stack_get_sp(stack_t *s)
 {
 	return s->sp;
@@ -32,6 +18,26 @@ int stack_get_sp(stack_t *s)
 void stack_set_sp(stack_t *s, int val)
 {
 	s->sp = val;
+}
+
+
+int stack_pop(stack_t *s)
+{
+	int sp = stack_get_sp(s);
+	int retval = s->array[sp];
+	stack_set_sp(s, sp - 1);
+
+	return retval;
+}
+
+
+int stack_push(stack_t *s, int val)
+{
+	int sp = stack_get_sp(s);
+	s->array[sp + 1] = val;
+	stack_set_sp(s, sp + 1);
+
+	return 0;
 }
 
 
@@ -55,5 +61,4 @@ void stack_free(stack_t *s)
 	free(s->array);
 	free(s);
 }
-
 
