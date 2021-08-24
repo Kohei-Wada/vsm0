@@ -36,6 +36,9 @@ int vsm_get_sp(vsm_t *v);
 void vsm_set_freg(vsm_t *v, int flag);
 int vsm_get_freg(vsm_t *v);
 
+static void vsm_set_dseg(vms_t *v, int val, int addr);
+static int vsm_get_dseg(vsm_t *v, int addr);
+
 int vsm_start(vsm_t *v, int start_addr, int trace_flag);
 
 static instr_t* vsm_get_instr(vsm_t *v, int pc);
@@ -48,6 +51,41 @@ int vsm_free(vsm_t *v);
 
 //void vms_dump_iseg();
 //void vsm_exec_report();
+
+static void vsm_handle_nop(vsm_t *v);
+static void vsm_handle_assgn(vsm_t *v);
+static void vsm_handle_add(vsm_t *v);
+static void vsm_handle_sub(vsm_t *v);
+static void vsm_handle_mul(vsm_t *v);
+static void vsm_handle_div(vsm_t *v);
+static void vsm_handle_mod(vsm_t *v);
+static void vsm_handle_csign(vsm_t *v);
+static void vsm_handle_and(vsm_t *v);
+static void vsm_handle_or(vsm_t *v);
+static void vsm_handle_not(vsm_t *v);
+static void vsm_handle_comp(vsm_t *v);
+static void vsm_handle_copy(vsm_t *v);
+static void vsm_handle_push(vsm_t *v);
+static void vsm_handle_pushi(vsm_t *v);
+static void vsm_handle_remove(vsm_t *v);
+static void vsm_handle_pop(vsm_t *v);
+static void vsm_handle_inc(vsm_t *v);
+static void vsm_handle_dec(vsm_t *v);
+static void vsm_handle_setfr(vsm_t *v);
+static void vsm_handle_incfr(vsm_t *v);
+static void vsm_handle_decfr(vsm_t *v);
+static void vsm_handle_jump(vsm_t *v);
+static void vsm_handle_blt(vsm_t *v);
+static void vsm_handle_ble(vsm_t *v);
+static void vsm_handle_beq(vsm_t *v);
+static void vsm_handle_bne(vsm_t *v);
+static void vsm_handle_bge(vsm_t *v);
+static void vsm_handle_bgt(vsm_t *v);
+static void vsm_handle_call(vsm_t *v);
+static void vsm_handle_ret(vsm_t *v);
+static void vsm_handle_halt(vsm_t *v);
+static void vsm_handle_input(vsm_t *v);
+static void vsm_handle_output(vsm_t *v);
 
 
 
@@ -106,10 +144,15 @@ int vsm_get_sp(vsm_t *v)
 	return v->sp;
 }
 
-
-static instr_t* vsm_get_instr(vsm_t *v, int pc)
+static void vsm_set_dseg(vms_t *v, int val, int addr)
 {
-	return v->iseg[pc];
+	v->dseg[addr] = val;
+}
+
+
+static int vsm_get_dseg(vsm_t *v, int addr)
+{
+	return v->dseg[addr];
 }
 
 
@@ -123,6 +166,12 @@ void vsm_set_instr(vsm_t *v, int pc, op_t op, int flag, int addr)
 
 	if (vsm_is_debug(v))
 		vsm_print_instr(v, pc);
+}
+
+
+static instr_t* vsm_get_instr(vsm_t *v, int pc)
+{
+	return v->iseg[pc];
 }
 
 
@@ -224,6 +273,46 @@ int vsm_free(vsm_t *v)
 	free(v->dseg);
 	free(v);
 	return 0;
+}
+
+
+static void vsm_handle_nop(vsm_t *v)
+{
+	return;
+}
+
+static void vsm_handle_assgn(vsm_t *v)
+{
+
+}
+
+
+static void vsm_handle_add(vsm_t *v) 
+{
+
+
+}
+
+static void vsm_handle_sub(vsm_t *v)
+{
+
+}
+
+static void vsm_handle_mul(vsm_t *v)
+{
+
+
+}
+
+static void vsm_handle_div(vsm_t *v)
+{
+
+}
+
+static void vsm_handle_mod(vsm_t *v)
+{
+
+
 }
 
 
