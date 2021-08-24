@@ -149,11 +149,8 @@ int vsm_back_patching(vsm_t *v, int loc, int target)
 
 static int vsm_handle_oparations(vsm_t *v, op_t op)
 {
-
 	return 0;
-
 }
-
 
 
 int vsm_start(vsm_t *v, int start_addr, int trace_sw)
@@ -161,22 +158,15 @@ int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 	instr_t *i;
 	op_t op;
 	int addr;
+	int pc = start_addr;
 
 	vsm_set_pc(v, start_addr);
 	vsm_set_sp(v, 0);
 	vsm_set_freg(v, 0);
 
-	int sp = 0;
-	int pc = start_addr;
-
 	while (1) {
 
-		if (sp >= STACK_SIZE || sp < 0) {
-			fprintf(stderr, "Illegal stack pointer %d\n", sp); 
-			return -1;
-		}
-		
-		i    = vsm_get_instr(v, sp);
+		i    = vsm_get_instr(v, pc);
 		op   = instr_get_op(i);
 		addr = instr_get_addr(i);
 
