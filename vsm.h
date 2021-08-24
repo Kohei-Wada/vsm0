@@ -30,6 +30,4 @@ int vsm_back_patching(vsm_t *v, int loc, int target);
 int vsm_init(vsm_t **v);
 void fsm_free(vsm_t *v);
 
-
-
 #endif 
