@@ -22,21 +22,44 @@ void stack_set_sp(stack_t *s, int val)
 }
 
 
+static int stack_get_array_val(stack_t *s, int sp)
+{
+	return  s->array[sp];
+}
+
+
+static int stack_get_stack_size(stack_t *s)
+{
+	return s->stack_size;
+}
+
+
+static void stack_set_array_val(stack_t *s, int sp, int val)
+{
+	s->array[sp] = val;
+}
+
+
 int stack_pop(stack_t *s)
 {
 	int sp = stack_get_sp(s);
-	int retval = s->array[sp];
 	stack_set_sp(s, sp - 1);
  
-	return retval;
+	return stack_get_array_val(s, sp);
 }
 
 
 int stack_push(stack_t *s, int val)
 {
-	int sp = stack_get_sp(s);
-	s->array[sp + 1] = val;
-	stack_set_sp(s, sp + 1);
+	int sp = stack_get_sp(s) + 1;
+
+	if (sp > stack_get_stack_size(s)) {
+		fprintf(stderr, "failed to push value");
+		return 1;
+	}
+
+	stack_set_sp(s, sp);
+	stack_set_array_val(s, sp, val); 
 
 	return 0;
 }
@@ -46,8 +69,10 @@ int stack_init(stack_t **s)
 {
 	*s = malloc(sizeof(stack_t));
 
-	if (!(*s)) 
+	if (!(*s)) {
+		perror("malloc");
 		return 1;
+	}
 
 	(*s)->sp = 0;
 	(*s)->stack_size = STACK_SIZE;
