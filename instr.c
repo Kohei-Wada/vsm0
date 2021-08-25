@@ -61,7 +61,7 @@ void instr_display(instr_t *i)
 	op_t op = instr_get_op(i); 
 	int addr = instr_get_addr(i);
 
-	printf("  %-8s", scode[op]);
+	printf("%s", scode[op]);
 
 	switch (op) {
 	case PUSH:
@@ -78,7 +78,7 @@ void instr_display(instr_t *i)
 	case BGE:
 	case BGT:
 	case CALL:
-		printf("%6d%4s", addr, instr_get_reg(i) ? "[fp]" : " ");
+		printf(" %d%s", addr, instr_get_reg(i) ? "[fp]" : " ");
 	default:
 		printf("%10c", ' ');
 	}
