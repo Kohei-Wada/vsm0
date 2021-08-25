@@ -7,6 +7,7 @@ typedef struct stack {
 	int sp;
 	int stack_size;
 	int *array;
+	int max_sp;
 } stack_t;
 
 
@@ -33,10 +34,27 @@ static int stack_get_stack_size(stack_t *s)
 	return s->stack_size;
 }
 
+static int stack_set_stack_size(stack_t *s, int size)
+{
+	s->stack_size = size;
+}
+
 
 static void stack_set_array_val(stack_t *s, int sp, int val)
 {
 	s->array[sp] = val;
+}
+
+
+void stack_set_max_sp(stack_t *s, int count)
+{
+	s->max_sp = count;
+}
+
+
+int stack_get_max_sp(stack_t *s)
+{
+	return s->max_sp;
 }
 
 
@@ -74,16 +92,24 @@ int stack_init(stack_t **s)
 {
 	*s = malloc(sizeof(stack_t));
 
-	if (!(*s)) {
-		perror("malloc");
-		return 1;
-	}
+	if (!(*s)) 
+		goto error;
 
-	(*s)->sp = 0;
-	(*s)->stack_size = STACK_SIZE;
 	(*s)->array = malloc(sizeof(int) * STACK_SIZE);
 
+	if (!(*s)->array)
+		goto error;
+
+	stack_set_sp(*s, 0);
+	stack_set_max_sp(*s, 0);
+	stack_set_stack_size(*s, STACK_SIZE);
+
 	return 0;
+
+
+  error:
+	perror("malloc");
+	return 1;
 }
 
 
