@@ -32,6 +32,7 @@ int vsm_is_debug(vsm_t *v);
 
 void vsm_set_pc(vsm_t *v, int addr);
 int vsm_get_pc(vsm_t *v);
+void vsm_inc_pc(vsm_t *v);
 
 void vsm_set_sp(vsm_t *v, int addr);
 int vsm_get_sp(vsm_t *v);
@@ -122,6 +123,11 @@ void vsm_set_pc(vsm_t *v, int addr)
 	v->pc = addr;
 }
 
+void vsm_inc_pc(vsm_t *v)
+{
+	++v->pc;
+}
+
 
 int vsm_get_pc(vsm_t *v)
 {
@@ -210,24 +216,18 @@ int vsm_back_patching(vsm_t *v, int loc, int target)
 			printf("trying to rewrite self address part at loc. %d\n", p);
 			return 0;
 		}
-
 		instr_set_addr(i, target);
 		loc = p;
 	}
-
 	return 0;
 }
 
 
 static int vsm_handle_instr(vsm_t *v, int pc)
 {
-
 	instr_t *i = vsm_get_instr(v, pc);
-	op_t op    = instr_get_op(i);
-	int addr   = instr_get_addr(i);
 
-
-	switch (op) {
+	switch (instr_get_op(i)) {
 	case NOP    : vsm_handle_nop(v);    break ;
 	case ASSGN  : vsm_handle_assgn(v);  break ;
 	case ADD    : vsm_handle_add(v);    break ;
@@ -271,17 +271,13 @@ static int vsm_handle_instr(vsm_t *v, int pc)
 
 int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 {
-	int pc;
-
 	vsm_set_pc(v, start_addr);
 	vsm_set_freg(v, 0);
 
 	while (!vsm_get_halt(v)) {
-		pc = vsm_get_pc(v);
-		vsm_handle_instr(v, pc);
-		vsm_set_pc(v, ++pc);
+		vsm_handle_instr(v, vsm_get_pc(v));
+		vsm_inc_pc(v);
 	}
-
 	return 0;
 }
 
@@ -336,7 +332,6 @@ int vsm_free(vsm_t *v)
 void vsm_dump_iseg(vsm_t *v, int first, int last)
 {
 	printf("\nContents of Instruction Segment\n");
-
 	for (; first <= last; ++first) 
 		vsm_print_instr(v, first);
 
@@ -392,7 +387,6 @@ static void vsm_handle_mul(vsm_t *v)
 	int val1 = stack_pop(s);
 
 	stack_push(s, val1 * val2);
-
 }
 
 
@@ -583,7 +577,6 @@ static void vsm_handle_jump(vsm_t *v)
 	int addr = instr_get_addr(i);
 
 	vsm_set_pc(v, addr);
-
 }
 
 static void vsm_handle_blt(vsm_t *v)
@@ -676,10 +669,17 @@ static void vsm_handle_bgt(vsm_t *v)
 }
 
 
-/*XXX*/
 static void vsm_handle_call(vsm_t *v)
 {
+	stack_t *s = vsm_get_stack(v);
 
+	int pc = vsm_get_pc(v);
+	stack_push(s, pc);
+
+	instr_t *i = vsm_get_instr(v, pc);
+	int addr = instr_get_addr(i);
+
+	vsm_set_pc(v, addr);
 }
 
 
