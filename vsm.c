@@ -317,6 +317,7 @@ int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 {
 	vsm_set_pc(v, start_addr);
 	vsm_set_freg(v, 0);
+	vsm_set_halt(v, 0);
 
 	while (1) {
 
@@ -355,7 +356,6 @@ int vsm_init(vsm_t **v)
 	vsm_set_halt(*v, 0);
 	vsm_set_max_pc(*v, 0);
 	vsm_set_instr_count(*v, 0);
-
 
 	return 0;
 

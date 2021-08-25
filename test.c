@@ -1,60 +1,38 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 #include "vsm.h"
 
 
-static void test0(vsm_t *v)
+static void nop_test(vsm_t *v)
 {
-	vsm_set_instr(v, 1, PUSHI, 0, 20);
-	vsm_set_instr(v, 2, PUSHI, 0, 30);
-	vsm_set_instr(v, 3, ADD, 0, 0);
-	vsm_set_instr(v, 4, PUSHI, 0, 3);
-	vsm_set_instr(v, 5, PUSHI, 0, 8);
-	vsm_set_instr(v, 6, SUB, 0, 3);
-	vsm_set_instr(v, 7, DIV, 0, 0);
-	vsm_set_instr(v, 8, OUTPUT, 0, 0);
-	vsm_set_instr(v, 9, HALT, 0, 0);
-}
-
-static void test1(vsm_t *v)
-{
-	vsm_set_instr(v, 1,  PUSHI, 0, 20);
-	vsm_set_instr(v, 2,  PUSHI, 0, 0);
-	vsm_set_instr(v, 3,  INPUT, 0, 0);
-	vsm_set_instr(v, 4,  PUSH, 0, 0);
-	vsm_set_instr(v, 5,  ADD, 0, 0);
-	vsm_set_instr(v, 6,  PUSHI, 0, 3);
-	vsm_set_instr(v, 7,  PUSHI, 0, 8);
-	vsm_set_instr(v, 8,  SUB, 0, 3);
-	vsm_set_instr(v, 9,  DIV, 0, 0);
-	vsm_set_instr(v, 10, OUTPUT, 0, 0);
-	vsm_set_instr(v, 11, HALT, 0, 0);
+	vsm_set_instr(v, 0, NOP, 0, 0);
+	vsm_set_instr(v, 1, HALT, 0, 0);
 }
 
 
-static void test2(vsm_t *v)
+static void assgn_test(vsm_t *v)
 {
-	vsm_set_instr(v, 1,  PUSHI, 0, 15);
-	vsm_set_instr(v, 2,  CSIGN, 0, 0);
-	vsm_set_instr(v, 3,  PUSHI, 0, 63);
-	vsm_set_instr(v, 4,  PUSHI, 0, 94);
-	vsm_set_instr(v, 5,  ADD, 0, 0);
-	vsm_set_instr(v, 6,  MUL, 0, 0);
-	vsm_set_instr(v, 7,  OUTPUT, 0, 0);
-	vsm_set_instr(v, 11, HALT, 0, 0);
+
 }
 
 
-static void test3(vsm_t *v)
+static void _op_test(vsm_t *v, int op)
 {
-	vsm_set_instr(v, 1,  PUSHI, 0, 401);
-	vsm_set_instr(v, 2,  PUSHI, 0, 552);
-	vsm_set_instr(v, 3,  ADD, 0, 0);
-	vsm_set_instr(v, 4,  PUSHI, 0, 223);
-	vsm_set_instr(v, 5,  PUSHI, 0, 158);
-	vsm_set_instr(v, 6,  SUB, 0, 0);
-	vsm_set_instr(v, 7,  DIV, 0, 0);
-	vsm_set_instr(v, 8,  OUTPUT, 0, 0);
-	vsm_set_instr(v, 9,  HALT, 0, 0);
+	vsm_set_instr(v, 0, PUSHI, 0, random()%1000);
+	vsm_set_instr(v, 1, PUSHI, 0, random()%1000);
+	vsm_set_instr(v, 2, op, 0, 0);
+	vsm_set_instr(v, 3, OUTPUT, 0, 0);
+	vsm_set_instr(v, 4, HALT, 0, 0);
 }
 
+static void op_test(vsm_t *v)
+{
+	for (op_t op = ADD; op <= COPY; ++op) {
+		_op_test(v, op);
+		vsm_start(v, 0, 0);
+		printf("\n");
+	}
+}
 
 
