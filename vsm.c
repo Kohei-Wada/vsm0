@@ -271,12 +271,13 @@ static int vsm_handle_instr(vsm_t *v, int pc)
 
 int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 {
-	int pc = start_addr;
+	int pc;
 
 	vsm_set_pc(v, start_addr);
 	vsm_set_freg(v, 0);
 
 	while (!vsm_get_halt(v)) {
+		pc = vsm_get_pc(v);
 		vsm_handle_instr(v, pc);
 		vsm_set_pc(v, ++pc);
 	}
