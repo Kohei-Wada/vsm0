@@ -10,10 +10,13 @@ int main(void)
 
 	test3(vsm);
 
-	//vsm_dump_iseg(vsm, 0, 11);
 
 	vsm_start(vsm, 0, 0);
+
+	vsm_exec_report(vsm);
 	vsm_free(vsm);
+
+
 
 	return 0;
 }
