@@ -8,8 +8,7 @@ int main(void)
 	vsm_init(&vsm);
 	vsm_set_debug(vsm, 1);
 
-	test3(vsm);
-
+	test0(vsm);
 
 	vsm_start(vsm, 0, 0);
 
