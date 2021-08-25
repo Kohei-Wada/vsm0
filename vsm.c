@@ -274,10 +274,15 @@ int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 	vsm_set_pc(v, start_addr);
 	vsm_set_freg(v, 0);
 
-	while (!vsm_get_halt(v)) {
+	while (1) {
+
+		if (vsm_get_halt(v))
+			break;
+
 		vsm_handle_instr(v, vsm_get_pc(v));
 		vsm_inc_pc(v);
 	}
+
 	return 0;
 }
 
@@ -325,6 +330,7 @@ int vsm_free(vsm_t *v)
 	free(v->stack);
 	free(v->dseg);
 	free(v);
+
 	return 0;
 }
 
@@ -458,7 +464,6 @@ static void vsm_handle_or(vsm_t *v)
 static void vsm_handle_not(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
-
 	int val = stack_pop(s);
 
 	stack_push(s, !val);
@@ -469,7 +474,7 @@ static void vsm_handle_comp(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
 
-	int next = stack_pop(s);
+	int next  = stack_pop(s);
 	int first = stack_pop(s);
 
 	int retval;
