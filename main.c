@@ -10,7 +10,7 @@ int main(void)
 	vsm_t *vsm;
 
 	vsm_init(&vsm);
-	vsm_set_debug(vsm, 1);
+	vsm_set_trace(vsm, 1);
 
 	op_test(vsm);
 

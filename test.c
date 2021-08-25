@@ -31,7 +31,6 @@ static void op_test(vsm_t *v)
 	for (op_t op = ADD; op <= COPY; ++op) {
 		_op_test(v, op);
 		vsm_start(v, 0, 0);
-		printf("\n");
 	}
 }
 

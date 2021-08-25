@@ -15,6 +15,7 @@ typedef struct vsm {
 	stack_t *stack;  // stack object
 
 	int debug;
+	int trace;
 	int halt;
 
 	int max_pc;
@@ -31,6 +32,9 @@ static void vsm_print_instr(vsm_t *v, int loc);
 
 void vsm_set_debug(vsm_t *v, int debug);
 int vsm_is_debug(vsm_t *v);
+
+void vsm_set_trace(vsm_t *v, int trace);
+int vsm_get_trace(vsm_t *v);
 
 void vsm_set_pc(vsm_t *v, int addr);
 int vsm_get_pc(vsm_t *v);
@@ -126,6 +130,15 @@ int vsm_is_debug(vsm_t *v)
 	return v->debug;
 }
 
+void vsm_set_trace(vsm_t *v, int trace)
+{
+	v->trace = trace;
+}
+
+int vsm_get_trace(vsm_t *v)
+{
+	return v->trace;
+}
 
 void vsm_set_pc(vsm_t *v, int addr)
 {
@@ -270,6 +283,9 @@ int vsm_back_patching(vsm_t *v, int loc, int target)
 static int vsm_handle_instr(vsm_t *v, int pc)
 {
 	instr_t *i = vsm_get_instr(v, pc);
+	if (vsm_get_trace(v)) {
+		vsm_print_instr(v, pc);
+	}
 
 	switch (instr_get_op(i)) {
 	case NOP    : vsm_handle_nop(v);    break ;
@@ -774,6 +790,6 @@ static void vsm_handle_output(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
 	int val = stack_pop(s);
-	printf("%15d\n", val);
+	printf("%d\n", val);
 }
 
