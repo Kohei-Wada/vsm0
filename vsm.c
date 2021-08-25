@@ -1,19 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "vsm.h"
 #include "instr.h"
 #include "stack.h"
 
-#define STACK_SIZE 100
 
 typedef struct vsm {
 	int pc;          // program counter
-	int sp;          // stack pointer
 	int freg;        // flag register
 	instr_t **iseg;  // instruction segment
 	int *dseg;       // data segment
 
-	stack_t *stack;
+	stack_t *stack;  // stack object
 
 	int debug;
 	int halt;
@@ -101,7 +100,7 @@ static void vsm_handle_halt(vsm_t *v);
 static void vsm_handle_input(vsm_t *v);
 static void vsm_handle_output(vsm_t *v);
 
-static int vsm_handle_oparations(vsm_t *v, int pc);
+static int vsm_handle_instr(vsm_t *v, int pc);
 
 
 
@@ -142,19 +141,7 @@ int vsm_get_freg(vsm_t *v)
 }
 
 
-void vsm_set_sp(vsm_t *v, int addr)
-{
-	v->sp = addr;
-}
-
-
-int vsm_get_sp(vsm_t *v)
-{
-	return v->sp;
-}
-
-
-stack_t *vsm_get_stack(vsm_t *v)
+static stack_t *vsm_get_stack(vsm_t *v)
 {
 	return v->stack;
 }
@@ -227,11 +214,12 @@ int vsm_back_patching(vsm_t *v, int loc, int target)
 		instr_set_addr(i, target);
 		loc = p;
 	}
+
 	return 0;
 }
 
 
-static int vsm_handle_oparations(vsm_t *v, int pc)
+static int vsm_handle_instr(vsm_t *v, int pc)
 {
 
 	instr_t *i = vsm_get_instr(v, pc);
@@ -289,7 +277,7 @@ int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 	vsm_set_freg(v, 0);
 
 	while (!vsm_get_halt(v)) {
-		vsm_handle_oparations(v, pc);
+		vsm_handle_instr(v, pc);
 		vsm_set_pc(v, ++pc);
 	}
 
@@ -317,7 +305,6 @@ int vsm_init(vsm_t **v)
 		goto vsm_error_malloc;
 
 	vsm_set_pc(*v, 0);
-	vsm_set_sp(*v, 0);
 
 	return 0;
 
@@ -347,7 +334,7 @@ int vsm_free(vsm_t *v)
 
 void vsm_dump_iseg(vsm_t *v, int first, int last)
 {
-	printf("\ncontents of instruction segment\n");
+	printf("\nContents of Instruction Segment\n");
 
 	for (; first <= last; ++first) 
 		vsm_print_instr(v, first);
@@ -378,8 +365,8 @@ static void vsm_handle_add(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
 
-	int val1 = stack_pop(s);
 	int val2 = stack_pop(s);
+	int val1 = stack_pop(s);
 
 	stack_push(s, val1 + val2);
 }
@@ -389,8 +376,8 @@ static void vsm_handle_sub(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
 
-	int val1 = stack_pop(s);
 	int val2 = stack_pop(s);
+	int val1 = stack_pop(s);
 
 	stack_push(s, val1 - val2);
 }
@@ -400,15 +387,14 @@ static void vsm_handle_mul(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
 
-	int val1 = stack_pop(s);
 	int val2 = stack_pop(s);
+	int val1 = stack_pop(s);
 
 	stack_push(s, val1 * val2);
 
 }
 
 
-/*XXX*/
 static void vsm_handle_div(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
@@ -424,8 +410,8 @@ static void vsm_handle_mod(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
 
-	int val1 = stack_pop(s);
 	int val2 = stack_pop(s);
+	int val1 = stack_pop(s);
 
 	stack_push(s, val1 % val2);
 }
@@ -437,7 +423,7 @@ static void vsm_handle_push(vsm_t *v)
 	instr_t *i = vsm_get_instr(v, vsm_get_pc(v));
 
 	int addr = instr_get_addr(i);
-	int val = vsm_get_dseg(v, addr);
+	int val  = vsm_get_dseg(v, addr);
 
 	stack_push(s, val);
 }
@@ -446,6 +432,7 @@ static void vsm_handle_push(vsm_t *v)
 static void vsm_handle_csign(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
+
 	int val = stack_pop(s);
 	stack_push(s, -val);
 }
@@ -461,6 +448,7 @@ static void vsm_handle_and(vsm_t *v)
 	stack_push(s, val1 && val2);
 }
 
+
 static void vsm_handle_or(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
@@ -470,7 +458,6 @@ static void vsm_handle_or(vsm_t *v)
 
 	stack_push(s, val1 || val2);
 }
-
 
 
 static void vsm_handle_not(vsm_t *v)
@@ -725,49 +712,3 @@ static void vsm_handle_output(vsm_t *v)
 	printf("%15d\n", val);
 }
 
-
-static void test(vsm_t *v)
-{
-	vsm_set_instr(v, 1, PUSHI, 0, 20);
-	vsm_set_instr(v, 2, INPUT, 0, 30);
-	vsm_set_instr(v, 3, ADD, 0, 0);
-	vsm_set_instr(v, 4, PUSHI, 0, 3);
-	vsm_set_instr(v, 5, PUSHI, 0, 8);
-	vsm_set_instr(v, 6, SUB, 0, 3);
-	vsm_set_instr(v, 7, DIV, 0, 0);
-	vsm_set_instr(v, 8, OUTPUT, 0, 0);
-	vsm_set_instr(v, 9, HALT, 0, 0);
-}
-
-
-static void test1(vsm_t *v)
-{
-	vsm_set_instr(v, 1, PUSHI, 0, 20);
-	vsm_set_instr(v, 2, PUSHI, 0, 0);
-	vsm_set_instr(v, 3, INPUT, 0, 0);
-	vsm_set_instr(v, 4, PUSH, 0, 0);
-	vsm_set_instr(v, 5, ADD, 0, 0);
-	vsm_set_instr(v, 6, PUSHI, 0, 3);
-	vsm_set_instr(v, 7, PUSHI, 0, 8);
-	vsm_set_instr(v, 8, SUB, 0, 3);
-	vsm_set_instr(v, 9, DIV, 0, 0);
-	vsm_set_instr(v, 10, OUTPUT, 0, 0);
-	vsm_set_instr(v, 11, HALT, 0, 0);
-}
-
-
-
-int main(void) 
-{
-	vsm_t *vsm;
-
-	vsm_init(&vsm);
-	vsm_set_debug(vsm, 1);
-
-	test1(vsm);
-
-	vsm_start(vsm, 0, 0);
-	vsm_free(vsm);
-
-	return 0;
-}

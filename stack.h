@@ -15,6 +15,4 @@ int stack_get_sp(stack_t *s);
 int stack_init(stack_t **s);
 void stack_free(stack_t *s);
 
-
-
 #endif

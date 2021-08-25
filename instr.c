@@ -28,6 +28,7 @@ void instr_set_reg(instr_t *i, unsigned int reg)
 	i->reg = reg;
 }
 
+
 unsigned int instr_get_reg(instr_t *i)
 {
 	return i->reg;
@@ -39,6 +40,7 @@ void instr_set_addr(instr_t *i, int addr)
 	i->addr = addr;
 }
 
+
 int instr_get_addr(instr_t *i)
 {
 	return i->addr;
@@ -46,7 +48,7 @@ int instr_get_addr(instr_t *i)
 
 
 static char *scode[] = {
-	"Nop", "  =" , "  +", "  -","  *", "  /", "  %",
+	"Nop", "  =" , "  +", "  -","  *" , "  /", "  %",
 	"  -'", "and", "or", "not", "comp", "copy", "push",
 	"push-i", "remove", "pop", " ++", " --", "setFR",
 	"++FR", "--FR", "jump", "<0 ?", "<=0 ?", "==0 ?",
@@ -56,10 +58,10 @@ static char *scode[] = {
 
 void instr_display(instr_t *i)
 {
-	unsigned int op = instr_get_op(i); 
+	op_t op = instr_get_op(i); 
 	int addr = instr_get_addr(i);
 
-	printf("%5d  %-8s", addr, scode[op]);
+	printf("  %-8s", scode[op]);
 
 	switch (op) {
 	case PUSH:
@@ -76,7 +78,7 @@ void instr_display(instr_t *i)
 	case BGE:
 	case BGT:
 	case CALL:
-		printf("%6d%4s", instr_get_addr(i), instr_get_reg(i) ? "[fp]" : " ");
+		printf("%6d%4s", addr, instr_get_reg(i) ? "[fp]" : " ");
 	default:
 		printf("%10c", ' ');
 	}
@@ -93,6 +95,7 @@ int instr_init(instr_t **i)
 
 	return 0;
 }
+
 
 int instr_free(instr_t *i)
 {
