@@ -317,6 +317,7 @@ int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 {
 	vsm_set_pc(v, start_addr);
 	vsm_set_freg(v, 0);
+	vsm_set_halt(v, 0);
 
 	while (1) {
 
