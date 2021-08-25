@@ -17,10 +17,12 @@ typedef struct vsm {
 	int debug;
 	int halt;
 
-	int ins_count;
+	int max_pc;
+
+	int instr_count;
+
 	int max_sd;
 	int min_fr;
-	int max_pc;
 	int call_c;
 } vsm_t;
 
@@ -32,6 +34,11 @@ int vsm_is_debug(vsm_t *v);
 
 void vsm_set_pc(vsm_t *v, int addr);
 int vsm_get_pc(vsm_t *v);
+void vsm_inc_pc(vsm_t *v);
+
+void vsm_set_instr_count(vsm_t *v, int count);
+int vsm_get_instr_count(vsm_t *v);
+void vsm_inc_instr_count(vsm_t *v);
 
 void vsm_set_sp(vsm_t *v, int addr);
 int vsm_get_sp(vsm_t *v);
@@ -41,6 +48,9 @@ int vsm_get_freg(vsm_t *v);
 
 void vsm_set_halt(vsm_t *v, int flag);
 int vsm_get_halt(vsm_t *v);
+
+void vsm_set_max_pc(vsm_t *v, int max);
+int vsm_get_max_pc(vsm_t *v);
 
 static instr_t* vsm_get_instr(vsm_t *v, int pc);
 void vsm_set_instr(vsm_t *v, int pc, op_t op, int flag, int addr);
@@ -59,7 +69,7 @@ int vsm_free(vsm_t *v);
 
 void vsm_dump_iseg(vsm_t *v, int first, int last);
 
-//void vsm_exec_report();
+void vsm_exec_report(vsm_t *v);
 
 static void vsm_handle_nop(vsm_t *v);
 static void vsm_handle_assgn(vsm_t *v);
@@ -122,6 +132,11 @@ void vsm_set_pc(vsm_t *v, int addr)
 	v->pc = addr;
 }
 
+void vsm_inc_pc(vsm_t *v)
+{
+	++v->pc;
+}
+
 
 int vsm_get_pc(vsm_t *v)
 {
@@ -171,6 +186,36 @@ int vsm_get_halt(vsm_t *v)
 }
 
 
+void vsm_set_instr_count(vsm_t *v, int count)
+{
+	v->instr_count = count;
+}
+
+
+int vsm_get_instr_count(vsm_t *v)
+{
+	return v->instr_count;
+}
+
+
+void vsm_inc_instr_count(vsm_t *v)
+{
+	++(v->instr_count);
+}
+
+
+void vsm_set_max_pc(vsm_t *v, int max)
+{
+	v->max_pc = max;
+}
+
+
+int vsm_get_max_pc(vsm_t *v)
+{
+	return v->max_pc;
+}
+
+
 static void vsm_print_instr(vsm_t *v, int loc)
 {
 	instr_t *i = vsm_get_instr(v, loc);
@@ -188,6 +233,10 @@ void vsm_set_instr(vsm_t *v, int pc, op_t op, int flag, int addr)
 
 	if (vsm_is_debug(v))
 		vsm_print_instr(v, pc);
+
+	/*XXX*/
+	if (vsm_get_max_pc(v) < pc)
+		vsm_set_max_pc(v, pc);
 }
 
 
@@ -199,35 +248,30 @@ static instr_t* vsm_get_instr(vsm_t *v, int pc)
 
 int vsm_back_patching(vsm_t *v, int loc, int target)
 {
-	int p;
+	int addr;
 	instr_t *i;
 
 	while (loc >= 0) {
-		i = vsm_get_instr(v, loc);
-		p = instr_get_addr(i);
+		i    = vsm_get_instr(v, loc);
+		addr = instr_get_addr(i);
 
-		if (p == loc) {
-			printf("trying to rewrite self address part at loc. %d\n", p);
-			return 0;
+		if (addr == loc) {
+			printf("trying to rewrite self address part at loc. %d\n", addr);
+			return 1;
 		}
 
 		instr_set_addr(i, target);
-		loc = p;
+		loc = addr;
 	}
-
 	return 0;
 }
 
 
 static int vsm_handle_instr(vsm_t *v, int pc)
 {
-
 	instr_t *i = vsm_get_instr(v, pc);
-	op_t op    = instr_get_op(i);
-	int addr   = instr_get_addr(i);
 
-
-	switch (op) {
+	switch (instr_get_op(i)) {
 	case NOP    : vsm_handle_nop(v);    break ;
 	case ASSGN  : vsm_handle_assgn(v);  break ;
 	case ADD    : vsm_handle_add(v);    break ;
@@ -271,15 +315,17 @@ static int vsm_handle_instr(vsm_t *v, int pc)
 
 int vsm_start(vsm_t *v, int start_addr, int trace_sw)
 {
-	int pc;
-
 	vsm_set_pc(v, start_addr);
 	vsm_set_freg(v, 0);
 
-	while (!vsm_get_halt(v)) {
-		pc = vsm_get_pc(v);
-		vsm_handle_instr(v, pc);
-		vsm_set_pc(v, ++pc);
+	while (1) {
+
+		if (vsm_get_halt(v))
+			break;
+
+		vsm_inc_instr_count(v);
+		vsm_handle_instr(v, vsm_get_pc(v));
+		vsm_inc_pc(v);
 	}
 
 	return 0;
@@ -306,6 +352,10 @@ int vsm_init(vsm_t **v)
 		goto vsm_error_malloc;
 
 	vsm_set_pc(*v, 0);
+	vsm_set_halt(*v, 0);
+	vsm_set_max_pc(*v, 0);
+	vsm_set_instr_count(*v, 0);
+
 
 	return 0;
 
@@ -329,6 +379,7 @@ int vsm_free(vsm_t *v)
 	free(v->stack);
 	free(v->dseg);
 	free(v);
+
 	return 0;
 }
 
@@ -336,12 +387,21 @@ int vsm_free(vsm_t *v)
 void vsm_dump_iseg(vsm_t *v, int first, int last)
 {
 	printf("\nContents of Instruction Segment\n");
-
 	for (; first <= last; ++first) 
 		vsm_print_instr(v, first);
 
 	printf("\n");
 }
+
+
+void vsm_exec_report(vsm_t *v)
+{
+	printf("\n");
+	printf("Object Code Size : %d\n", vsm_get_max_pc(v));
+	printf("Execution Count  : %d\n", vsm_get_instr_count(v));
+	printf("\n");
+}
+
 
 
 static void vsm_handle_nop(vsm_t *v)
@@ -392,7 +452,6 @@ static void vsm_handle_mul(vsm_t *v)
 	int val1 = stack_pop(s);
 
 	stack_push(s, val1 * val2);
-
 }
 
 
@@ -464,7 +523,6 @@ static void vsm_handle_or(vsm_t *v)
 static void vsm_handle_not(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
-
 	int val = stack_pop(s);
 
 	stack_push(s, !val);
@@ -475,7 +533,7 @@ static void vsm_handle_comp(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
 
-	int next = stack_pop(s);
+	int next  = stack_pop(s);
 	int first = stack_pop(s);
 
 	int retval;
@@ -583,7 +641,6 @@ static void vsm_handle_jump(vsm_t *v)
 	int addr = instr_get_addr(i);
 
 	vsm_set_pc(v, addr);
-
 }
 
 static void vsm_handle_blt(vsm_t *v)
@@ -676,10 +733,17 @@ static void vsm_handle_bgt(vsm_t *v)
 }
 
 
-/*XXX*/
 static void vsm_handle_call(vsm_t *v)
 {
+	stack_t *s = vsm_get_stack(v);
 
+	int pc = vsm_get_pc(v);
+	stack_push(s, pc);
+
+	instr_t *i = vsm_get_instr(v, pc);
+	int addr = instr_get_addr(i);
+
+	vsm_set_pc(v, addr);
 }
 
 

@@ -25,7 +25,8 @@ int vsm_start(vsm_t *v, int start_addr, int trace_flag);
 void vsm_set_instr(vsm_t *v, int pc, op_t op, int flag, int addr);
 
 void vsm_dump_iseg(vsm_t *v, int first, int last);
-//void vsm_exec_report();
+
+void vsm_exec_report(vsm_t *v);
 
 int vsm_back_patching(vsm_t *v, int loc, int target);
 
