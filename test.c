@@ -53,7 +53,7 @@ static void test3(vsm_t *v)
 	vsm_set_instr(v, 6,  SUB, 0, 0);
 	vsm_set_instr(v, 7,  DIV, 0, 0);
 	vsm_set_instr(v, 8,  OUTPUT, 0, 0);
-	vsm_set_instr(v, 9, HALT, 0, 0);
+	vsm_set_instr(v, 9,  HALT, 0, 0);
 }
 
 
