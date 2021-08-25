@@ -356,7 +356,6 @@ int vsm_init(vsm_t **v)
 	vsm_set_max_pc(*v, 0);
 	vsm_set_instr_count(*v, 0);
 
-
 	return 0;
 
 
