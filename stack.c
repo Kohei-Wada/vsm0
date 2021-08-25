@@ -43,8 +43,13 @@ static void stack_set_array_val(stack_t *s, int sp, int val)
 int stack_pop(stack_t *s)
 {
 	int sp = stack_get_sp(s);
+
+	if (sp == 0) {
+		/*TODO handle error.*/
+		fprintf(stderr, "failed to pop value\n");
+	}
+
 	stack_set_sp(s, sp - 1);
- 
 	return stack_get_array_val(s, sp);
 }
 
@@ -54,7 +59,7 @@ int stack_push(stack_t *s, int val)
 	int sp = stack_get_sp(s) + 1;
 
 	if (sp > stack_get_stack_size(s)) {
-		fprintf(stderr, "failed to push value");
+		fprintf(stderr, "failed to push value\n");
 		return 1;
 	}
 
