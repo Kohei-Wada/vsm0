@@ -14,23 +14,81 @@ static vsm_t *yyvsm = NULL;
 %%
 
 program 
-:expr_list  { vsm_set_instr(yyvsm, yypc, HALT, 0, 0); YYACCEPT; yypc_inc();}      
+:expr_list  
+{ 
+	vsm_set_instr(yyvsm, yypc, HALT, 0, 0); 
+	yypc_set(0);
+	YYACCEPT; 
+}      
 ;
+
 
 expr_list 
 : 
-| expr_list expr  ';'   { vsm_set_instr(yyvsm, yypc, OUTPUT, 0, 0); yypc_inc();}
-| expr_list error ';'   { yyerrok;}
+
+| expr_list expr  ';'   
+{ 
+	vsm_set_instr(yyvsm, yypc, OUTPUT, 0, 0); 
+	yypc_inc();
+}
+
+
+| expr_list error ';'  
+{
+	yyerrok;
+}
+
 ;
 
 expr
-: expr ADDOP expr       { $$ = $1 + $3; vsm_set_instr(yyvsm, yypc, ADD, 0, 0); yypc_inc();}
-| expr SUBOP expr       { $$ = $1 - $3;}
-| expr MULOP expr       { $$ = $1 * $3;}
-| expr DIVOP expr       { $$ = $1 / $3;}
-| expr MODOP expr       { $$ = $1 % $3;}
+
+: expr ADDOP expr       
+{ 
+	vsm_set_instr(yyvsm, yypc, ADD, 0, 0); 
+	yypc_inc();
+}
+
+
+| expr SUBOP expr       
+{ 
+	vsm_set_instr(yyvsm, yypc, SUB, 0, 0); 
+	yypc_inc();
+}
+
+
+| expr MULOP expr       
+{ 
+	vsm_set_instr(yyvsm, yypc, MUL, 0, 0); 
+	yypc_inc();
+}
+
+
+| expr DIVOP expr       
+{ 
+	vsm_set_instr(yyvsm, yypc, DIV, 0, 0); 
+	yypc_inc();
+}
+
+
+| expr MODOP expr       
+{ 
+	vsm_set_instr(yyvsm, yypc, MOD, 0, 0); 
+	yypc_inc();
+}
+
+
 | '(' expr ')'          
-| NUM                   { vsm_set_instr(yyvsm, yypc, PUSHI, 0, $1); yypc_inc();}
+{ 
+
+}
+
+
+| NUM                   
+{ 
+	vsm_set_instr(yyvsm, yypc, PUSHI, 0, $1); 
+	yypc_inc();
+}
+
 ;
 
 %%
@@ -41,10 +99,18 @@ void set_yyvsm(vsm_t *v)
 	yyvsm = v;
 }
 
+
 void yypc_inc(void)
 {
 	++yypc;
 }
+
+
+void yypc_set(int pc)
+{
+	yypc = pc;
+}
+
 
 void yyerror(char *s)
 {
