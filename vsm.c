@@ -14,13 +14,13 @@ typedef struct vsm {
 
 	stack_t *stack;  // stack object
 
-	int debug;
-	int trace;
-	int halt;
+	int debug;       // debug flag
+	int trace;       // trace flag
+	int halt;        
 
-	int max_pc;
+	int max_pc;      // max size of pc
 
-	int instr_count;
+	int instr_count; // instruction count
 
 	int max_sd;
 	int min_fr;

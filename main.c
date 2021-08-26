@@ -11,10 +11,10 @@ int main(void)
 
 	vsm_init(&vsm);
 	vsm_set_trace(vsm, 1);
+	srand(time(NULL));
 
 	op_test(vsm);
 
-	srand(time(NULL));
 	vsm_free(vsm);
 	return 0;
 }
