@@ -9,8 +9,16 @@
 int main(void) 
 {
 
+	vsm_t *v;
+	vsm_init(&v);
+
+	set_yyvsm(v);
 	yyparse();
 
+	vsm_start(v, 0, 0);
+
+
+	vsm_free(v);
 
 	return 0;
 }
