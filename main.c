@@ -11,6 +11,7 @@ int main(void)
 
 	vsm_t *v;
 	vsm_init(&v);
+//	vsm_set_trace(v, 1);
 
 	set_yyvsm(v);
 	yyparse();
