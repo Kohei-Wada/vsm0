@@ -1,9 +1,19 @@
 #!/bin/bash
 
 
+vsm="./vsm"
+
+
+if ! [ -e "$vsm" ]; then
+	echo vsm does not exist.
+	exit 1;
+fi
+
+
+
 while IFS='=' read exp ans 
 do 
-	retval=$(echo $(echo "$exp;" | ./vsm ))
+	retval=$(echo $(echo "$exp;" | $vsm ))
 	ans=$(echo "$ans" | cut -d " " -f 2)
 
 	echo -n "retval = $retval, ans = $ans"
