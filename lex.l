@@ -6,7 +6,7 @@
 %}
 
 integer 0|[1-9][0-9]*
-symbol [();]
+symbol [();\\n]
 other .
 
 

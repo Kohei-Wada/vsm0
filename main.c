@@ -18,7 +18,6 @@ int main(void)
 
 	vsm_start(v, 0, 0);
 
-
 	vsm_free(v);
 
 	return 0;
