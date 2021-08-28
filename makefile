@@ -2,7 +2,7 @@ TARGET = vsm
 CFLAGS = -g -O0 #-Wall
 
 OBJS_VSM = vsm.o instr.o stack.o main.o test.o  
-OBJS_PARSER = y.tab.o lex.yy.o 
+OBJS_PARSER =  y.tab.o lex.yy.o nmtable.o symtable.o parser.o
 
 SRCS_VSM = $(OBJ_VSM: %c = %o)
 
