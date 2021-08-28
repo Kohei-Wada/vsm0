@@ -4,6 +4,7 @@
 #include "vsm.h"
 #include "instr.h"
 #include "stack.h"
+#include "parser.h"
 
 
 typedef struct vsm {
@@ -13,6 +14,8 @@ typedef struct vsm {
 	int *dseg;       // data segment
 
 	stack_t *stack;  // stack object
+
+	parser_t *parser;
 
 	int debug;       // debug flag
 	int trace;       // trace flag
@@ -360,13 +363,19 @@ int vsm_init(vsm_t **v)
 
 	for (int i = 0; i < ISEG_SIZE - 1; ++i)
 		if (instr_init(&(*v)->iseg[i]))
-			goto vsm_error_iseg_init;
+			goto error;
 
 	(*v)->dseg = malloc(sizeof(int) * DSEG_SIZE);
 	stack_init(&(*v)->stack);
 
 	if (!(*v)->iseg || !(*v)->dseg || !(*v)->stack) 
 		goto vsm_error_malloc;
+
+
+	parser_init(&(*v)->parser);
+
+	if (!(*v)->parser)
+		goto error;
 
 	vsm_set_pc(*v, 0);
 	vsm_set_halt(*v, 0);
@@ -380,7 +389,7 @@ int vsm_init(vsm_t **v)
 
 	perror("mallc");
 
-  vsm_error_iseg_init:
+  error:
 
 	return 1;
 }
@@ -659,6 +668,8 @@ static void vsm_handle_jump(vsm_t *v)
 	vsm_set_pc(v, addr);
 }
 
+
+/*Branch on Less Than*/
 static void vsm_handle_blt(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
@@ -674,6 +685,7 @@ static void vsm_handle_blt(vsm_t *v)
 }
 
 
+/*Branch on Less than or Equal to*/
 static void vsm_handle_ble(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
@@ -688,7 +700,7 @@ static void vsm_handle_ble(vsm_t *v)
 		vsm_set_pc(v, addr);
 }
 
-
+/*Branch on EQual to*/ 
 static void vsm_handle_beq(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
@@ -703,7 +715,7 @@ static void vsm_handle_beq(vsm_t *v)
 		vsm_set_pc(v, addr);
 }
 
-
+/*Branch on Not Equal to*/
 static void vsm_handle_bne(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
@@ -719,6 +731,7 @@ static void vsm_handle_bne(vsm_t *v)
 }
 
 
+/*Branch on Grater than or Equal to*/
 static void vsm_handle_bge(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
@@ -734,6 +747,7 @@ static void vsm_handle_bge(vsm_t *v)
 }
 
 
+/*Branch on Grater Than*/
 static void vsm_handle_bgt(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
