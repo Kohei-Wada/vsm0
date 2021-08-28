@@ -7,6 +7,25 @@ typedef struct symtable{
 	int last;
 } symtable_t;
 
+
+char **symtable_get_table(symtable_t *s)
+{
+	return s->table;
+}
+
+
+int symtable_get_last(symtable_t *s)
+{
+	return s->last;
+}
+
+
+void symtable_set_last(symtable_t *s, int value)
+{
+	s->last = value;
+}
+
+
 int symtable_init(symtable_t **s)
 {
 	*s = malloc(sizeof(symtable_t));
@@ -15,7 +34,6 @@ int symtable_init(symtable_t **s)
 		return 1;
 
 	(*s)->last = 0;
-
 	return 0;
 }
 
@@ -26,8 +44,37 @@ void symtable_free(symtable_t *s)
 }
 
 
-int symtable_decl(symtable_t *s, char *symname)
+int symtable_decl(symtable_t *s, char *name)
 {
-	return 0;
+	int i;
+	char **table = symtable_get_table(s);
+	int last = symtable_get_last(s);
+
+	table[last + 1] = name;
+	
+	for (i = 0; table[i] != name; ++i);
+
+	if (i > last) {
+		symtable_set_last(s, i);
+		return 0;
+	}
+
+	return 1;
+}
+
+
+int symtable_ref(symtable_t *s, char *name)
+{
+	int i;
+	char **table = symtable_get_table(s);
+	int last = symtable_get_last(s);
+
+	table[last + 1] = name;
+	
+	for (i = 0; table[i] != name; ++i);
+	if (i > last) 
+		return -1;//failed 
+
+	return i;
 }
 
