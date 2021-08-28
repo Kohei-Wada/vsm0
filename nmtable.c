@@ -1,9 +1,10 @@
 #include <stdlib.h> 
-
+#include "nmtable.h"
 
 typedef struct nmtable{
 	int i;
 } nmtable_t;
+
 
 int nmtable_init(nmtable_t **n)
 {

@@ -67,6 +67,8 @@ static int vsm_get_dseg(vsm_t *v, int addr);
 
 static stack_t *vsm_get_stack(vsm_t *v);
 
+parser_t *vsm_get_parser(vsm_t *v);
+
 int vsm_start(vsm_t *v, int start_addr, int trace_flag);
 
 int vsm_back_patching(vsm_t *v, int loc, int target);
@@ -175,6 +177,12 @@ int vsm_get_freg(vsm_t *v)
 static stack_t *vsm_get_stack(vsm_t *v)
 {
 	return v->stack;
+}
+
+
+parser_t *vsm_get_parser(vsm_t *v)
+{
+	return v->parser;
 }
 
 
@@ -401,8 +409,10 @@ int vsm_free(vsm_t *v)
 		free(v->iseg[i]);
 
 	free(v->iseg);
-	free(v->stack);
+	stack_free(v->stack);
+
 	free(v->dseg);
+	parser_free(v->parser);
 	free(v);
 
 	return 0;
