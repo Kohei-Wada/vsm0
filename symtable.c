@@ -8,19 +8,19 @@ typedef struct symtable{
 } symtable_t;
 
 
-char **symtable_get_table(symtable_t *s)
+static char **symtable_get_table(symtable_t *s)
 {
 	return s->table;
 }
 
 
-int symtable_get_last(symtable_t *s)
+static int symtable_get_last(symtable_t *s)
 {
 	return s->last;
 }
 
 
-void symtable_set_last(symtable_t *s, int value)
+static void symtable_set_last(symtable_t *s, int value)
 {
 	s->last = value;
 }
