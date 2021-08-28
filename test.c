@@ -25,7 +25,7 @@ static void op_test(vsm_t *v)
 		vsm_set_instr(v, 2, op, 0, 0);
 		vsm_set_instr(v, 3, OUTPUT, 0, 0);
 		vsm_set_instr(v, 4, HALT, 0, 0);
-		vsm_start(v, 0, 0);
+		vsm_start(v, 0);
 		printf("\n");
 	}
 }

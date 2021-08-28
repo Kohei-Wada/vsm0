@@ -64,7 +64,7 @@ static int vsm_get_dseg(vsm_t *v, int addr);
 
 static stack_t *vsm_get_stack(vsm_t *v);
 
-int vsm_start(vsm_t *v, int start_addr, int trace_flag);
+int vsm_start(vsm_t *v, int start_addr);
 
 int vsm_back_patching(vsm_t *v, int loc, int target);
 
@@ -329,7 +329,7 @@ static int vsm_handle_instr(vsm_t *v, int pc)
 }
 
 
-int vsm_start(vsm_t *v, int start_addr, int trace_sw)
+int vsm_start(vsm_t *v, int start_addr)
 {
 	vsm_set_pc(v, start_addr);
 	vsm_set_freg(v, 0);

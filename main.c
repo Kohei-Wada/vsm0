@@ -16,7 +16,7 @@ int main(void)
 	set_yyvsm(v);
 	yyparse();
 
-	vsm_start(v, 0, 0);
+	vsm_start(v, 0);
 
 	vsm_free(v);
 

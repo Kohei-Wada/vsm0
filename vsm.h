@@ -23,7 +23,7 @@ int vsm_get_freg(vsm_t *v);
 void vsm_set_trace(vsm_t *v, int trace);
 int vsm_get_trace(vsm_t *v);
 
-int vsm_start(vsm_t *v, int start_addr, int trace_flag);
+int vsm_start(vsm_t *v, int start_addr);
 
 void vsm_set_instr(vsm_t *v, int pc, op_t op, int flag, int addr);
 
