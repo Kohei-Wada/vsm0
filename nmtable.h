@@ -1,5 +1,5 @@
-#ifndef _NMTABLE_H_
-#define _NMTABLE_H_
+#ifndef NMTABLE_H
+#define NMTABLE_H
 
 
 #define NMTABLE_SIZE 100

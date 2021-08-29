@@ -1,5 +1,5 @@
-#ifndef _VSM_H_
-#define _VSM_H_
+#ifndef VSM_H
+#define VSM_H
 
 #include "stack.h"
 #include "instr.h"

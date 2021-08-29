@@ -1,5 +1,5 @@
-#ifndef _INSTR_H_
-#define _INSTR_H_
+#ifndef INSTR_H
+#define INSTR_H
 
 typedef enum {
 	NOP,

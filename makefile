@@ -16,6 +16,9 @@ y.tab.c : parser.y
 lex.yy.c: lex.l y.tab.h
 	flex $<
 
+
+y.tab.h : parser.y
+
 y.tab.h : parser.y
 
 .c.o:
