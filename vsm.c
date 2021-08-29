@@ -4,7 +4,7 @@
 #include "vsm.h"
 #include "instr.h"
 #include "stack.h"
-#include "parser.h"
+#include "parse.h"
 
 
 typedef struct vsm {

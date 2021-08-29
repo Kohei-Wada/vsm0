@@ -1,7 +1,7 @@
 
 #include <stdlib.h> 
 
-#include "parser.h"
+#include "parse.h"
 #include "nmtable.h"
 #include "symtable.h"
 
