@@ -380,7 +380,7 @@ int vsm_init(vsm_t **v)
 		goto vsm_error_malloc;
 
 
-	parser_init(&(*v)->parser);
+	parser_init(&(*v)->parser, *v);
 
 	if (!(*v)->parser)
 		goto error;

@@ -2,14 +2,22 @@
 #include "nmtable.h"
 #include "symtable.h"
 
+#include "vsm.h"
 
 typedef struct parser{
 	nmtable_t *nmtable;
 	symtable_t *symtable;
+	vsm_t *vsm;
 } parser_t;
 
 
-int parser_init(parser_t **p)
+int parser_set(vsm_t *vsm)
+{
+	return 0;
+}
+
+
+int parser_init(parser_t **p, vsm_t *v)
 {
 	*p = malloc(sizeof(parser_t));
 
@@ -18,6 +26,9 @@ int parser_init(parser_t **p)
 
 	nmtable_init(&(*p)->nmtable);
 	symtable_init(&(*p)->symtable);
+	(*p)->vsm = v;
+
+
 
 	return 0;
 }

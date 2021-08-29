@@ -11,7 +11,7 @@ $(TARGET) : $(OBJS_PARSER) $(OBJS_VSM)
 
 
 y.tab.c : parser.y
-	yacc -d $<
+	yacc -o y.tab.c -d $<
 
 lex.yy.c: lex.l y.tab.h
 	flex $<
