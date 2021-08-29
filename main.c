@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "y.tab.h"
 #include "vsm.h"
-#include "test.c"
+#include "y.tab.h"
 
 int main(void) 
 {

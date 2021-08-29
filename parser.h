@@ -1,7 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "vsm.h"
+typedef struct vsm vsm_t;
 
 typedef struct parser parser_t;
 

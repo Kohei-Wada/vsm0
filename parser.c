@@ -1,8 +1,10 @@
+
 #include <stdlib.h> 
+
+#include "parser.h"
 #include "nmtable.h"
 #include "symtable.h"
 
-#include "vsm.h"
 
 typedef struct parser{
 	nmtable_t *nmtable;
