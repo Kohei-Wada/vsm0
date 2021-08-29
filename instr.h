@@ -1,7 +1,7 @@
 #ifndef INSTR_H
 #define INSTR_H
 
-typedef enum {
+typedef enum op{
 	NOP,
 	ASSGN,
 	ADD,
