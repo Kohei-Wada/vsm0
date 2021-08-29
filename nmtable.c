@@ -7,6 +7,7 @@ typedef struct nmtable{
 	id_entry_t *table[NMTABLE_SIZE];
 } nmtable_t;
 
+
 /***********************************************************************************/
 
 static int id_entry_init(id_entry_t **e, char *name, int len, id_entry_t *next)
@@ -103,7 +104,6 @@ static id_entry_t *nmtable_search(nmtable_t *n, char *sp, int len, int hash)
 		if ((id_entry_get_len(entry) == len && strcmp(id_entry_get_name(entry), sp) == 0))
 			return entry;
 	}
-
 	return NULL;
 }
 

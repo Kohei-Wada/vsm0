@@ -5,24 +5,34 @@
 #include "instr.h"
 %}
 
+
+letter [a-zA-Z_]
+
+id     {letter}({letter}|[0-9])*
+
 integer 0|[1-9][0-9]*
-symbol [();\\n]
+symbol [();]
 other .
 
 
 %%
 
-{integer} { yylval = atoi(yytext); return NUM; }
+{integer} { yylval.int_value = atoi(yytext); return NUM; }
 
 {symbol}  { return yytext[0];}
 
-"+"       { yylval = ADD; return ADDOP; }
-"-"       { yylval = SUB; return SUBOP; }
-"*"       { yylval = MUL; return MULOP; }
-"/"       { yylval = DIV; return DIVOP; }
-"%"       { yylval = MOD; return MODOP; }
-" "       { }
+"+"       { yylval.int_value = ADD; return ADDOP; }
+"-"       { yylval.int_value = SUB; return SUBOP; }
+"*"       { yylval.int_value = MUL; return MULOP; }
+"/"       { yylval.int_value = DIV; return DIVOP; }
+"%"       { yylval.int_value = MOD; return MODOP; }
+"||"      { yylval.int_value = OR;  return OROP; }
+"&&"      { yylval.int_value = AND; return ANDOP; }
 
+
+" "       { }
+"\n"      { }
+"\t"      { }
 {other}   { fprintf(stderr, "Illigal char '%c' ignored\n", yytext[0]);}
 
 %%
