@@ -32,18 +32,11 @@ typedef struct vsm {
 
 
 static instr_t* vsm_get_instr(vsm_t *v, int pc);
-void vsm_set_instr(vsm_t *v, int pc, op_t op, int flag, int addr);
 
 static void vsm_set_dseg(vsm_t *v, int addr, int val);
 static int vsm_get_dseg(vsm_t *v, int addr);
 
 static stack_t *vsm_get_stack(vsm_t *v);
-
-int vsm_back_patching(vsm_t *v, int loc, int target);
-
-void vsm_dump_iseg(vsm_t *v, int first, int last);
-
-void vsm_exec_report(vsm_t *v);
 
 static void vsm_handle_nop(vsm_t *v);
 static void vsm_handle_assgn(vsm_t *v);

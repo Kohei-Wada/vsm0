@@ -4,7 +4,9 @@
 #include "parser.h"
 #include "nmtable.h"
 #include "symtable.h"
-#include "y.tab.h"
+
+void set_yyvsm(vsm_t *v);
+void yyparse();
 
 
 typedef struct parser{
@@ -31,10 +33,7 @@ int parser_init(parser_t **p, vsm_t *v)
 	symtable_init(&(*p)->symtable);
 	(*p)->vsm = v;
 
-
 	set_yyvsm(v);
-
-
 
 	return 0;
 }
