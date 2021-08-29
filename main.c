@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "vsm.h"
-#include "y.tab.h"
 
 int main(int argc, char **argv) 
 {
