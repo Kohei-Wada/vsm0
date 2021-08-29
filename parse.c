@@ -4,6 +4,8 @@
 #include "parse.h"
 #include "nmtable.h"
 #include "symtable.h"
+#include "instr.h"
+#include "vsm.h"
 
 void set_yyvsm(vsm_t *v);
 void yyparse();
@@ -13,12 +15,31 @@ typedef struct parser{
 	nmtable_t *nmtable;
 	symtable_t *symtable;
 	vsm_t *vsm;
+	int pc;
 } parser_t;
 
 
-int parser_set(vsm_t *vsm)
+void parser_set_vsm(parser_t *p, vsm_t *v)
 {
-	return 0;
+	p->vsm = v;
+}
+
+
+vsm_t* parser_get_vsm(parser_t *p)
+{
+	return p->vsm;
+}
+
+
+static void parser_inc_pc(parser_t *p)
+{
+	++(p->pc);
+}
+
+
+static int parser_get_pc(parser_t *p)
+{
+	return p->pc;
 }
 
 
@@ -51,4 +72,14 @@ void parser_read(parser_t *p)
 {
 	yyparse();
 }
+
+
+void parser_handle_simple_op(parser_t *p, op_t op)
+{
+	vsm_t *v = parser_get_vsm(p);
+	int pc = parser_get_pc(p);
+	vsm_set_instr(v, pc, op, 0, 0); 
+	parser_inc_pc(p);
+}
+
 

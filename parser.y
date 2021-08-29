@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include "vsm.h"
 #include "instr.h"
+#include "parse.h"
 
 static int yypc = 0;
 static vsm_t *yyvsm = NULL;
+static parser_t *p = NULL;
 
 extern int yyparse(void);
 extern int yylex(void);
@@ -13,6 +15,8 @@ void yyerror(char *);
 void yypc_inc(void);
 void yypc_set(int pc);
 extern void set_yyvsm(vsm_t *v);
+
+extern void yy_set_parser(parser_t *p);
 %}
 
 
@@ -141,3 +145,7 @@ void yyerror(char *s)
 	fprintf(stderr, "%s\n", s);
 }
 
+void yy_set_parser(parser_t *p)
+{
+	p = p;
+}
