@@ -12,8 +12,8 @@ int main(void)
 	vsm_init(&v);
 //	vsm_set_trace(v, 1);
 
-	set_yyvsm(v);
-	yyparse();
+	parser_t *p = vsm_get_parser(v);
+	parser_read(p);
 
 	vsm_start(v, 0);
 

@@ -5,6 +5,15 @@
 
 static int yypc = 0;
 static vsm_t *yyvsm = NULL;
+
+extern int yyparse(void);
+extern int yylex(void);
+void yyerror(char *);
+
+void yypc_inc(void);
+void yypc_set(int pc);
+extern void set_yyvsm(vsm_t *v);
+
 %}
 
 %token NUM
