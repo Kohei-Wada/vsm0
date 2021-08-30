@@ -6,7 +6,7 @@
 #include "instr.h"
 #include "vsm.h"
 
-void yyparse();
+int yyparse();
 void yy_set_parser(parser_t *p);
 
 
@@ -72,11 +72,12 @@ void parser_free(parser_t *p)
 }
 
 
-void parser_read(parser_t *p)
+int parser_read(parser_t *p)
 {
 	parser_set_pc(p, 0);
 	yy_set_parser(p);
-	yyparse();
+
+	return yyparse();
 }
 
 
