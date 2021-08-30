@@ -15,16 +15,16 @@ extern void yy_set_parser(parser_t *p);
 
 
 %union {
+	op_t op;
 	int int_value;
 	char *name;
 };
 
-%token <int_value> NUM ADDOP SUBOP MULOP DIVOP OROP ANDOP
+%token <int_value> NUM ADDOP MULOP LAND LOR 
 %token <name> ID
 
-%left ADDOP SUBOP
-%left MULOP DIVOP MODOP ANDOP OROP
-
+%left ADDOP 
+%left MULOP LAND LOR
 
 %%
 
@@ -56,37 +56,22 @@ expr
 
 : expr ADDOP expr       
 { 
-	parser_handle_simple_op(yyp, ADD);
-}
-
-| expr SUBOP expr       
-{ 
-	parser_handle_simple_op(yyp, SUB);
+	parser_handle_simple_op(yyp, $2);
 }
 
 | expr MULOP expr       
 { 
-	parser_handle_simple_op(yyp, MUL);
+	parser_handle_simple_op(yyp, $2);
 }
 
-| expr DIVOP expr       
+| expr LAND expr       
 { 
-	parser_handle_simple_op(yyp, DIV);
+	parser_handle_simple_op(yyp, $2);
 }
 
-| expr MODOP expr       
+| expr LOR expr       
 { 
-	parser_handle_simple_op(yyp, MOD);
-}
-
-| expr OROP expr       
-{ 
-	parser_handle_simple_op(yyp, OR);
-}
-
-| expr ANDOP expr       
-{ 
-	parser_handle_simple_op(yyp, AND);
+	parser_handle_simple_op(yyp, $2);
 }
 
 | '(' expr ')'          

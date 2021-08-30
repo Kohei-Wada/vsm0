@@ -1,7 +1,7 @@
 #ifndef INSTR_H
 #define INSTR_H
 
-typedef enum op{
+enum op{
 	NOP,
 	ASSGN,
 	ADD,
@@ -36,8 +36,9 @@ typedef enum op{
 	HALT,
 	INPUT,
 	OUTPUT
-} op_t;
+};
 
+typedef enum op op_t;
 typedef struct instr instr_t;
 
 void instr_set_op(instr_t *i, op_t op);

@@ -1,8 +1,7 @@
 %{
-#include <stdio.h>
-#include "y.tab.h"
-#include "vsm.h"
+/*include instr , befor y.tab.h*/
 #include "instr.h"
+#include "y.tab.h"
 %}
 
 
@@ -21,13 +20,13 @@ other .
 
 {symbol}  { return yytext[0];}
 
-"+"       { yylval.int_value = ADD; return ADDOP; }
-"-"       { yylval.int_value = SUB; return SUBOP; }
-"*"       { yylval.int_value = MUL; return MULOP; }
-"/"       { yylval.int_value = DIV; return DIVOP; }
-"%"       { yylval.int_value = MOD; return MODOP; }
-"||"      { yylval.int_value = OR;  return OROP; }
-"&&"      { yylval.int_value = AND; return ANDOP; }
+"+"       { yylval.op = ADD; return ADDOP; }
+"-"       { yylval.op = SUB; return ADDOP; }
+"*"       { yylval.op = MUL; return MULOP; }
+"/"       { yylval.op = DIV; return MULOP; }
+"%"       { yylval.op = MOD; return MULOP; }
+"||"      { yylval.op = OR;  return LOR; }
+"&&"      { yylval.op = AND; return LAND; }
 
 
 " "       { }

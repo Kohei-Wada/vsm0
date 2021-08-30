@@ -6,10 +6,10 @@
 #include "instr.h"
 #include "vsm.h"
 
-
 void set_yyvsm(vsm_t *v);
 void yyparse();
 void yy_set_parser(parser_t *p);
+
 
 typedef struct parser{
 	nmtable_t *nmtable;
