@@ -28,6 +28,8 @@ other .
 "||"      { yylval.op = OR;  return LOR; }
 "&&"      { yylval.op = AND; return LAND; }
 
+"write"   { yylval.op = OUTPUT; return WRITE; }
+
 " "       { }
 "\n"      { }
 "\t"      { }

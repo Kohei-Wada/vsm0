@@ -10,10 +10,9 @@ if ! [ -e "$vsm" ]; then
 fi
 
 
-
-while IFS='=' read exp ans 
+while IFS=',' read exp ans 
 do 
-	retval=$(echo $(echo "$exp;" | $vsm ))
+	retval=$(echo "$exp" | $vsm)
 	ans=$(echo "$ans" | cut -d " " -f 2)
 
 	echo -n "retval = $retval, ans = $ans"

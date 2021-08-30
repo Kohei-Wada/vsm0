@@ -20,7 +20,7 @@ extern void yy_set_parser(parser_t *p);
 	char *name;
 };
 
-%token <int_value> NUM ADDOP MULOP LAND LOR 
+%token <int_value> NUM ADDOP MULOP LAND LOR WRITE
 %token <name> ID
 
 %left ADDOP 
@@ -48,8 +48,14 @@ s_list
 stmnt
 : expr ';'
 {
+	parser_handle_simple_op(yyp, REMOVE);
+}
+
+| WRITE expr ';'
+{
 	parser_handle_simple_op(yyp, OUTPUT);
 }
+
 
 | error ';'
 {
