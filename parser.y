@@ -25,31 +25,36 @@ extern void yy_set_parser(parser_t *p);
 
 %left ADDOP 
 %left MULOP LAND LOR
+%right '!'
 
 %%
 
+
 program 
-:expr_list  
-{ 
+: s_list
+{
 	parser_handle_simple_op(yyp, HALT);
 	YYACCEPT; 
-}      
+}
 ;
 
 
-expr_list 
-: 
+s_list 
+: stmnt
+| s_list stmnt
+;
 
-| expr_list expr  ';'   
-{ 
+
+stmnt
+: expr ';'
+{
 	parser_handle_simple_op(yyp, OUTPUT);
 }
 
-| expr_list error ';'  
+| error ';'
 {
 	yyerrok;
 }
-;
 
 
 expr
@@ -73,7 +78,6 @@ expr
 { 
 	parser_handle_simple_op(yyp, $2);
 }
-
 
 | '!' expr
 {
