@@ -8,6 +8,7 @@
 int main(int argc, char **argv) 
 {
 
+	int retval = 0;
 	int trace = 0;
 
 	if (argc > 1) {
@@ -20,11 +21,13 @@ int main(int argc, char **argv)
 	vsm_set_trace(v, trace);
 
 	parser_t *p = vsm_get_parser(v);
-	parser_read(p);
+	if (retval = parser_read(p))
+		goto fail;
 
 	vsm_start(v, 0);
 
 
+  fail:
 	vsm_free(v);
 
 	return 0;
