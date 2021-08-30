@@ -74,6 +74,12 @@ expr
 	parser_handle_simple_op(yyp, $2);
 }
 
+
+| '!' expr
+{
+	parser_handle_simple_op(yyp, NOT);
+}
+
 | '(' expr ')'          
 { 
 

@@ -10,7 +10,7 @@ letter [a-zA-Z_]
 id     {letter}({letter}|[0-9])*
 
 integer 0|[1-9][0-9]*
-symbol [();]
+symbol [();!]
 other .
 
 
@@ -27,7 +27,6 @@ other .
 "%"       { yylval.op = MOD; return MULOP; }
 "||"      { yylval.op = OR;  return LOR; }
 "&&"      { yylval.op = AND; return LAND; }
-
 
 " "       { }
 "\n"      { }
