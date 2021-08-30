@@ -1,5 +1,5 @@
-#ifndef SYMTABLE_H_
-#define SYMTABLE_H_
+#ifndef SYMTABLE_H
+#define SYMTABLE_H
 
 
 #define SYMTABLE_SIZE 100
