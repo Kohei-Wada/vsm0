@@ -1,7 +1,9 @@
 #include <stdlib.h> 
 #include <string.h>
+#include <stdio.h>
 
 #include "nmtable.h"
+
 
 typedef struct nmtable{
 	id_entry_t *table[NMTABLE_SIZE];
@@ -14,18 +16,31 @@ static int id_entry_init(id_entry_t **e, char *name, int len, id_entry_t *next)
 {
 	*e = malloc(sizeof(id_entry_t));
 	if (!(*e))
-		return 1;
+		goto error;
+
+	(*e)->name = malloc(len);
+	if (!(*e)->name)
+		goto error;
 
 	strcpy((*e)->name, name);
 	(*e)->len  = len;
 	(*e)->next = next;
 
 	return 0;
+
+
+  error:
+	perror("malloc");
+	return 1;
 }
 
 
 static void id_entry_free(id_entry_t *e)
 {
+	if (!e)
+		return;
+
+	free(e->name);
 	free(e);
 }
 
