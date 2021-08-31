@@ -18,15 +18,27 @@ typedef struct parser{
 } parser_t;
 
 
-void parser_set_vsm(parser_t *p, vsm_t *v)
+static void parser_set_vsm(parser_t *p, vsm_t *v)
 {
 	p->vsm = v;
 }
 
 
-vsm_t* parser_get_vsm(parser_t *p)
+static vsm_t* parser_get_vsm(parser_t *p)
 {
 	return p->vsm;
+}
+
+
+static void parser_set_nmtable(parser_t *p, nmtable_t *n)
+{
+	p->nmtable = n;
+}
+
+
+static nmtable_t* parser_get_nmtable(parser_t *p)
+{
+	return p->nmtable;
 }
 
 
@@ -99,5 +111,13 @@ void parser_handle_num(parser_t *p, int num)
 	vsm_set_instr(v, pc, PUSHI, 0, num); 
 	parser_inc_pc(p);
 }
+
+
+char *parser_id_entry(parser_t *p, char *name, int len)
+{
+	nmtable_t *n = parser_get_nmtable(p);
+	return nmtable_entry(n, name, len);
+}
+
 
 

@@ -12,4 +12,6 @@ int parser_read(parser_t *p);
 void parser_handle_simple_op(parser_t *p, op_t op);
 void parser_handle_num(parser_t *p, int num);
 
+char *parser_id_entry(parser_t *p, char *name, int len);
+
 #endif

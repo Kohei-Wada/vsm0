@@ -2,6 +2,9 @@
 /*include instr , befor y.tab.h*/
 #include "instr.h"
 #include "y.tab.h"
+#include "parse.h"
+
+static parser_t *lp = NULL;
 %}
 
 
@@ -10,7 +13,7 @@ letter [a-zA-Z_]
 id     {letter}({letter}|[0-9])*
 
 integer 0|[1-9][0-9]*
-symbol [();!]
+symbol [();!,=]
 other .
 
 
@@ -42,3 +45,8 @@ int yywrap()
 	return 1;
 }
 
+
+void yyl_set_parser(parser_t *p)
+{
+	lp = p;
+}

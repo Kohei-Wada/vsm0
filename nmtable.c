@@ -123,7 +123,7 @@ static id_entry_t *nmtable_search(nmtable_t *n, char *sp, int len, int hash)
 }
 
 
-char* nmtable_add(nmtable_t *n, char *id_name, int len)
+char* nmtable_entry(nmtable_t *n, char *id_name, int len)
 {
 	id_entry_t *entry, *new;
 	id_entry_t **table = nmtable_get_table(n);

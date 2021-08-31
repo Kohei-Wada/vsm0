@@ -15,5 +15,5 @@ typedef struct nmtable nmtable_t;
 int nmtable_init(nmtable_t **p);
 void nmtable_free(nmtable_t *p);
 
-char* nmtable_add(nmtable_t *n, char *id_name, int len);
+char* nmtable_entry(nmtable_t *n, char *id_name, int len);
 #endif
