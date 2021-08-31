@@ -339,7 +339,7 @@ int vsm_init(vsm_t **v)
 
 	(*v)->iseg = malloc(sizeof(instr_t*) * ISEG_SIZE);
 
-	for (int i = 0; i < ISEG_SIZE - 1; ++i)
+	for (int i = 0; i < ISEG_SIZE; ++i)
 		if (instr_init(&(*v)->iseg[i]))
 			goto error;
 
@@ -376,7 +376,7 @@ int vsm_init(vsm_t **v)
 int vsm_free(vsm_t *v)
 {
 	for (int i = 0; i < ISEG_SIZE - 1; ++i)
-		free(v->iseg[i]);
+		instr_free(v->iseg[i]);
 
 	free(v->iseg);
 	stack_free(v->stack);
@@ -419,11 +419,11 @@ static void vsm_handle_assgn(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
 
+	int value = stack_pop(s);
 	int addr = stack_pop(s);
-	stack_pop(s);
-	stack_push(s, addr);
+	stack_push(s, value);
 
-	vsm_set_dseg(v, addr, addr);
+	vsm_set_dseg(v, addr, value);
 }
 
 
