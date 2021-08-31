@@ -1,6 +1,3 @@
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "vsm.h"
@@ -30,5 +27,5 @@ int main(int argc, char **argv)
   fail:
 	vsm_free(v);
 
-	return 0;
+	return retval;
 }
