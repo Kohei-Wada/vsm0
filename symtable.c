@@ -46,35 +46,30 @@ void symtable_free(symtable_t *s)
 
 int symtable_decl(symtable_t *s, char *name)
 {
-	int i;
 	char **table = symtable_get_table(s);
 	int last = symtable_get_last(s);
 
-	table[last + 1] = name;
-	
-	for (i = 0; table[i] != name; ++i);
-
-	if (i > last) {
-		symtable_set_last(s, i);
-		return 0;
+	for (int i = 0; i < last + 1; ++i) {
+		if (table[i] == name)
+			return 1;
 	}
 
-	return 1;
+	table[last + 1] = name;
+	symtable_set_last(s, last + 1);
+
+	return 0;
 }
 
 
 int symtable_ref(symtable_t *s, char *name)
 {
-	int i;
 	char **table = symtable_get_table(s);
 	int last = symtable_get_last(s);
 
-	table[last + 1] = name;
+	for (int i = 0; i < last + 1; ++i) {
+		if (table[i] == name)
+			return i;
+	}
 	
-	for (i = 0; table[i] != name; ++i);
-	if (i > last) 
-		return -1;//failed 
-
-	return i;
+	return -1;
 }
-

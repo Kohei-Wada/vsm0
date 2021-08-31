@@ -118,6 +118,3 @@ char *parser_id_entry(parser_t *p, char *name, int len)
 	nmtable_t *n = parser_get_nmtable(p);
 	return nmtable_entry(n, name, len);
 }
-
-
-
