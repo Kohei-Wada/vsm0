@@ -137,7 +137,7 @@ char* nmtable_entry(nmtable_t *n, char *id_name, int len)
 
 	table[hash] = new;
 
-	return NULL;
+	return id_entry_get_name(new);;
 }	
 
 

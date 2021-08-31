@@ -20,9 +20,11 @@ extern void yy_set_parser(parser_t *p);
 	char *name;
 };
 
+%token TYPE
 %token <int_value> NUM ADDOP MULOP LAND LOR WRITE
 %token <name> ID
 
+%right '='
 %left ADDOP 
 %left MULOP LAND LOR
 %right '!'
@@ -31,10 +33,28 @@ extern void yy_set_parser(parser_t *p);
 
 
 program 
-: s_list
+: decl_list s_list
 {
 	parser_handle_simple_op(yyp, HALT);
 	YYACCEPT; 
+}
+;
+
+
+decl_list
+:
+| decl_list decl ';'
+;
+
+
+decl
+: TYPE ID
+{
+	parser_sym_decl(yyp, $2);
+}
+| decl ',' ID
+{
+	parser_sym_decl(yyp, $3);
 }
 ;
 
@@ -56,7 +76,6 @@ stmnt
 	parser_handle_simple_op(yyp, OUTPUT);
 }
 
-
 | error ';'
 {
 	yyerrok;
@@ -64,7 +83,6 @@ stmnt
 
 
 expr
-
 : expr ADDOP expr       
 { 
 	parser_handle_simple_op(yyp, $2);
@@ -93,6 +111,11 @@ expr
 | '(' expr ')'          
 { 
 
+}
+
+| ID                   
+{ 
+	parser_cout(yyp, PUSH, parser_sym_ref(yyp, $1));
 }
 
 | NUM                   
