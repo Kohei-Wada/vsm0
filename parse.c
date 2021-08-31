@@ -41,6 +41,16 @@ static nmtable_t* parser_get_nmtable(parser_t *p)
 	return p->nmtable;
 }
 
+static void parser_set_symtable(parser_t *p, symtable_t *s)
+{
+	p->symtable = s;
+}
+
+
+static symtable_t* parser_get_symtable(parser_t *p)
+{
+	return p->symtable;
+}
 
 void parser_inc_pc(parser_t *p)
 {
@@ -118,3 +128,19 @@ char *parser_id_entry(parser_t *p, char *name, int len)
 	nmtable_t *n = parser_get_nmtable(p);
 	return nmtable_entry(n, name, len);
 }
+
+
+int parser_sym_decl(parser_t *p, char *name)
+{
+	symtable_t *s = parser_get_symtable(p);
+	return symtable_decl(s, name);
+}
+
+
+int parser_sym_ref(parser_t *p, char *name)
+{
+	symtable_t *s = parser_get_symtable(p);
+	return symtable_ref(s, name);
+}
+
+
