@@ -14,4 +14,7 @@ void parser_handle_num(parser_t *p, int num);
 
 char *parser_id_entry(parser_t *p, char *name, int len);
 
+int parser_sym_decl(parser_t *p, char *name);
+int parser_sym_ref(parser_t *p, char *name);
+
 #endif
