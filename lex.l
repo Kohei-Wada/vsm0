@@ -3,7 +3,7 @@
 #include "instr.h"
 #include "y.tab.h"
 #include "parse.h"
-
+#include <stdio.h>
 static parser_t *lp = NULL;
 %}
 
@@ -19,8 +19,9 @@ other .
 
 %%
 
-{integer} { yylval.int_value = atoi(yytext); return NUM; }
-
+" "       { }
+"\n"      { }
+"\t"      { }
 {symbol}  { return yytext[0];}
 
 "+"       { yylval.op = ADD; return ADDOP; }
@@ -31,11 +32,12 @@ other .
 "||"      { yylval.op = OR;  return LOR; }
 "&&"      { yylval.op = AND; return LAND; }
 
+"int"     { return TYPE; }
 "write"   { yylval.op = OUTPUT; return WRITE; }
 
-" "       { }
-"\n"      { }
-"\t"      { }
+{integer} { yylval.int_value = atoi(yytext); return NUM; }
+{id}      { yylval.name = parser_id_entry(lp, yytext, yyleng); return ID; }
+
 {other}   { fprintf(stderr, "Illigal char '%c' ignored\n", yytext[0]);}
 
 %%

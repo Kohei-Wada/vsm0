@@ -8,6 +8,7 @@
 
 int yyparse();
 void yy_set_parser(parser_t *p);
+void yyl_set_parser(parser_t *p);
 
 
 typedef struct parser{
@@ -98,6 +99,7 @@ int parser_read(parser_t *p)
 {
 	parser_set_pc(p, 0);
 	yy_set_parser(p);
+	yyl_set_parser(p);
 
 	return yyparse();
 }
@@ -141,6 +143,17 @@ int parser_sym_ref(parser_t *p, char *name)
 {
 	symtable_t *s = parser_get_symtable(p);
 	return symtable_ref(s, name);
+}
+
+
+int parser_cout(parser_t *p, op_t op, int i)
+{
+	vsm_t *v = parser_get_vsm(p);
+	int pc = parser_get_pc(p);
+
+	vsm_set_instr(v, pc, op, 0, i); 
+	parser_inc_pc(p);
+
 }
 
 
