@@ -59,6 +59,14 @@ decl
 ;
 
 
+LHS 
+: ID
+{  
+	parser_cout(yyp, PUSHI, parser_sym_ref(yyp, $1));
+}
+;
+
+
 s_list 
 : stmnt
 | s_list stmnt
@@ -83,7 +91,12 @@ stmnt
 
 
 expr
-: expr ADDOP expr       
+: LHS '=' expr
+{
+	parser_handle_simple_op(yyp, ASSGN);
+}
+
+| expr ADDOP expr       
 { 
 	parser_handle_simple_op(yyp, $2);
 }
