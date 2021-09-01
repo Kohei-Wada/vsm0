@@ -251,8 +251,8 @@ int vsm_back_patching(vsm_t *v, int loc, int target)
 
 static int vsm_handle_instr(vsm_t *v, int pc)
 {
-	instr_t *i = vsm_get_instr(v, pc);
 
+	instr_t *i = vsm_get_instr(v, pc);
 	if (i == NULL) {
 
 		/* If parsing fails, NOP continues to run and refer NULL pointer.*/
