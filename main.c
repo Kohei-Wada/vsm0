@@ -24,19 +24,21 @@ int main(int argc, char **argv)
 			break;
 
 		case 'f':
-			parser_set_input_file(p, optarg);
+			if (parser_set_input_file(p, optarg))
+				goto fail;
 			break;
+		default:
+			goto fail;
 		}
 	}
 
-	int retval = 0;
 
+	int retval = 0;
 	if (retval = parser_read(p))
 		goto fail;
 
 
 	vsm_start(v, 0);
-
 
   fail:
 	vsm_free(v);
