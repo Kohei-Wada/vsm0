@@ -83,32 +83,4 @@ X=24;
 Y=25;
 Z=26;
 
-write A ; 
-write B ; 
-write C ; 
-write D ; 
-write E ; 
-write F ; 
-write G ; 
-write H ; 
-write I ; 
-write J ; 
-write K ; 
-write L ; 
-write M ; 
-write N ; 
-write O ; 
-write P ; 
-write Q ; 
-write R ; 
-write S ; 
-write T ; 
-write U ; 
-write V ; 
-write W ; 
-write X ; 
-write Y ; 
-write Z ; 
-
-
-
+write A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z;
