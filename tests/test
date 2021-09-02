@@ -3,6 +3,18 @@
 
 vsm="../vsm"
 
+retval=0
+
+
+print_result() 
+{
+	if [ "$retval" = 0 ];then
+		echo -e "\033[32m ok \033[m"
+	else
+		echo -e "\033[31m test failed. \033[m"
+	fi
+}
+
 
 if ! [ -e "$vsm" ]; then
 	echo vsm does not exist.
@@ -10,21 +22,21 @@ if ! [ -e "$vsm" ]; then
 fi
 
 
-diff <(cat assgn.test | $vsm) assgn.right
-if [ "$?" = 0 ];then
-	echo -n "[assgn test]"
-	echo -e "\033[32m ok \033[m"
-else
-	echo -n "[assgn test]"
-	echo -e "\033[31m test failed. \033[m"
-fi
+echo -n "[assgn test]"
+diff <($vsm -f assgn.test) assgn.right
+retval="$?"
+print_result
 
 
-diff <(cat calc.test | $vsm) calc.right
-if [ "$?" = 0 ];then
-	echo -n "[calc test]"
-	echo -e "\033[32m ok \033[m"
-else
-	echo -n "[calc test]"
-	echo -e "\033[31m test failed. \033[m"
-fi
+echo -n "[calc test]"
+diff <($vsm -f calc.test) calc.right
+retval="$?"
+print_result
+
+
+echo -n "[read test]"
+diff <( printf "1\n2\n3\n" | $vsm -f read.test) <( printf "1\n2\n3\n")
+retval="$?"
+print_result
+
+
