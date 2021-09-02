@@ -34,6 +34,7 @@ other .
 
 "int"     { return TYPE; }
 "write"   { yylval.op = OUTPUT; return WRITE; }
+"read"    { yylval.op = INPUT;  return READ; }
 
 {integer} { yylval.int_value = atoi(yytext); return NUM; }
 {id}      { yylval.name = parser_id_entry(lp, yytext, yyleng); return ID; }

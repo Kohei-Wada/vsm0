@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h> 
 
 #include "parse.h"
@@ -8,7 +9,10 @@
 
 int yyparse();
 void yy_set_parser(parser_t *p);
+void yy_set_yyin(FILE *f);
+
 void yyl_set_parser(parser_t *p);
+
 
 
 typedef struct parser{
@@ -16,6 +20,7 @@ typedef struct parser{
 	symtable_t *symtable;
 	vsm_t *vsm;
 	int pc;
+	FILE *input_file;
 } parser_t;
 
 
@@ -53,9 +58,21 @@ static symtable_t* parser_get_symtable(parser_t *p)
 	return p->symtable;
 }
 
+
 void parser_inc_pc(parser_t *p)
 {
 	++(p->pc);
+}
+
+
+int parser_set_input_file(parser_t *p, const char *file_name)
+{
+	FILE *f = fopen(file_name, "r");
+	if (!f)
+		return;
+
+	p->input_file = f;
+	yy_set_yyin(f);
 }
 
 
@@ -80,8 +97,10 @@ int parser_init(parser_t **p, vsm_t *v)
 
 	nmtable_init(&(*p)->nmtable);
 	symtable_init(&(*p)->symtable);
+
 	(*p)->vsm = v;
 	(*p)->pc = 0;
+	(*p)->input_file = NULL;
 
 	return 0;
 }
@@ -91,6 +110,9 @@ void parser_free(parser_t *p)
 {
 	nmtable_free(p->nmtable);
 	symtable_free(p->symtable);
+
+	if (p->input_file)
+		fclose(p->input_file);
 	free(p);
 }
 

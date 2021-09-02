@@ -10,7 +10,7 @@ extern int yylex(void);
 void yyerror(char *);
 
 extern void yy_set_parser(parser_t *p);
-
+extern void yy_set_yyin(FILE *f);
 %}
 
 
@@ -21,7 +21,7 @@ extern void yy_set_parser(parser_t *p);
 };
 
 %token TYPE
-%token <int_value> NUM ADDOP MULOP LAND LOR WRITE
+%token <int_value> NUM ADDOP MULOP LAND LOR WRITE READ
 %token <name> ID
 
 %right '='
@@ -82,6 +82,11 @@ stmnt
 | WRITE expr ';'
 {
 	parser_handle_simple_op(yyp, OUTPUT);
+}
+
+| READ LHS ';'
+{
+	parser_handle_simple_op(yyp, INPUT);
 }
 
 | error ';'
@@ -148,3 +153,12 @@ void yy_set_parser(parser_t *p)
 {
 	yyp = p;
 }
+
+
+void yy_set_yyin(FILE *f)
+{
+	extern FILE *yyin;
+	yyin = f;
+}
+
+
