@@ -69,10 +69,12 @@ int parser_set_input_file(parser_t *p, const char *file_name)
 {
 	FILE *f = fopen(file_name, "r");
 	if (!f)
-		return;
+		return 1;
 
 	p->input_file = f;
 	yy_set_yyin(f);
+
+	return 0;
 }
 
 
