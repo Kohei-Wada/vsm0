@@ -7,6 +7,9 @@ OBJS_PARSER = lex.yy.o y.tab.o nmtable.o symtable.o parse.o
 
 SRCS_VSM = $(OBJ_VSM: %c = %o)
 
+
+all : $(TARGET)
+
 $(TARGET) : $(OBJS_PARSER) $(OBJS_VSM) 
 	$(CC) -o $(TARGET) $(CFLAGS) $(OBJS_VSM) $(OBJS_PARSER)
 
@@ -22,6 +25,10 @@ y.tab.h : y.tab.c
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
+
+
+test: all
+	cd tests; ./test
 
 
 clean : 
