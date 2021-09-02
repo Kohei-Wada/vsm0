@@ -79,10 +79,7 @@ stmnt
 	parser_handle_simple_op(yyp, REMOVE);
 }
 
-| WRITE expr ';'
-{
-	parser_handle_simple_op(yyp, OUTPUT);
-}
+| write_stmnt ';'
 
 | READ LHS ';'
 {
@@ -93,6 +90,20 @@ stmnt
 {
 	yyerrok;
 }
+
+
+
+write_stmnt
+: WRITE expr 
+{
+	parser_handle_simple_op(yyp, OUTPUT);
+}
+
+| write_stmnt ',' expr 
+{
+	parser_handle_simple_op(yyp, OUTPUT);
+}
+
 
 
 expr
