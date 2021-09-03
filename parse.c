@@ -139,6 +139,22 @@ void parser_handle_simple_op(parser_t *p, op_t op)
 }
 
 
+void parser_handle_ppmm(parser_t *p, op_t op, char *id_name)
+{
+	vsm_t *v = parser_get_vsm(p);
+	int pc = parser_get_pc(p);
+
+	int addr = parser_sym_ref(p, id_name);
+	parser_inc_pc(p);
+
+	parser_cout(p, PUSH, addr);
+	parser_handle_simple_op(p, op);
+	parser_handle_simple_op(p, COPY);
+	parser_cout(p, POP, addr);
+
+}
+
+
 void parser_handle_num(parser_t *p, int num)
 {
 	vsm_t *v = parser_get_vsm(p);

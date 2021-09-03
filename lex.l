@@ -23,15 +23,17 @@ other .
 "\n"      { }
 "\t"      { }
 {symbol}  { return yytext[0];}
-
 "+"       { yylval.op = ADD; return ADDOP; }
 "-"       { yylval.op = SUB; return ADDOP; }
 "*"       { yylval.op = MUL; return MULOP; }
 "/"       { yylval.op = DIV; return MULOP; }
 "%"       { yylval.op = MOD; return MULOP; }
+
+"++"      { yylval.op = INC; return PPMM; }
+"--"      { yylval.op = DEC; return PPMM; }
+
 "||"      { yylval.op = OR;  return LOR; }
 "&&"      { yylval.op = AND; return LAND; }
-
 "int"     { return TYPE; }
 "write"   { yylval.op = OUTPUT; return WRITE; }
 "read"    { yylval.op = INPUT;  return READ; }
