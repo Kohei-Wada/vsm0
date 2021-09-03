@@ -139,17 +139,23 @@ void parser_handle_simple_op(parser_t *p, op_t op)
 }
 
 
-/*XXX*/
-void parser_handle_ppmm(parser_t *p, op_t op, char *id_name)
+void parser_handle_ppmm(parser_t *p, op_t op, char *id_name, int priorize)
 {
 	vsm_t *v = parser_get_vsm(p);
 	int addr = parser_sym_ref(p, id_name);
 
 	parser_cout(p, PUSH, addr);
-	parser_handle_simple_op(p, op);
-	parser_handle_simple_op(p, COPY);
-	parser_cout(p, POP, addr);
 
+	if (priorize) {
+		parser_handle_simple_op(p, op);
+		parser_handle_simple_op(p, COPY);
+	}
+	else {
+		parser_handle_simple_op(p, COPY);
+		parser_handle_simple_op(p, op);
+	}
+
+	parser_cout(p, POP, addr);
 }
 
 

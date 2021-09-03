@@ -134,9 +134,13 @@ expr
 
 | PPMM ID
 {
-	parser_handle_ppmm(yyp, $1, $2); 
+	parser_handle_ppmm(yyp, $1, $2, 1); 
 }
 
+| ID PPMM
+{
+	parser_handle_ppmm(yyp, $2, $1, 0); 
+}
 
 | '!' expr
 {
