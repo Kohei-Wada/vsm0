@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
 
 	int opt;
-	while ((opt = getopt(argc, argv, "tf:")) != -1) {
+	while ((opt = getopt(argc, argv, "tf:d")) != -1) {
 		switch (opt){
 		case 't':
 			vsm_set_trace(v, 1);
@@ -27,6 +27,11 @@ int main(int argc, char **argv)
 			if (parser_set_input_file(p, optarg))
 				goto fail;
 			break;
+
+		case 'd':
+			vsm_set_debug(v, 1);
+			break;
+
 		default:
 			goto fail;
 		}
