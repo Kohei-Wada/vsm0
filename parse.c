@@ -133,7 +133,6 @@ void parser_handle_simple_op(parser_t *p, op_t op)
 {
 	vsm_t *v = parser_get_vsm(p);
 	int pc = parser_get_pc(p);
-
 	vsm_set_instr(v, pc, op, 0, 0); 
 	parser_inc_pc(p);
 }
@@ -143,19 +142,20 @@ void parser_handle_ppmm(parser_t *p, op_t op, char *id_name, int priorize)
 {
 	vsm_t *v = parser_get_vsm(p);
 	int addr = parser_sym_ref(p, id_name);
+	int pc = parser_get_pc(p);
 
-	parser_cout(p, PUSH, addr);
+	vsm_set_instr(v, pc, PUSH, 0, addr); 
 
 	if (priorize) {
-		parser_handle_simple_op(p, op);
-		parser_handle_simple_op(p, COPY);
+		vsm_set_instr(v, pc + 1, op, 0, 0); 
+		vsm_set_instr(v, pc + 2, COPY, 0, 0); 
 	}
 	else {
-		parser_handle_simple_op(p, COPY);
-		parser_handle_simple_op(p, op);
+		vsm_set_instr(v, pc + 1, COPY, 0, 0); 
+		vsm_set_instr(v, pc + 2, op, 0, 0); 
 	}
-
-	parser_cout(p, POP, addr);
+	vsm_set_instr(v, pc + 3, POP, 0, addr); 
+	parser_set_pc(p, pc + 4);
 }
 
 
@@ -190,14 +190,13 @@ int parser_sym_ref(parser_t *p, char *name)
 }
 
 
-int parser_cout(parser_t *p, op_t op, int i)
+void parser_handle_id(parser_t *p, op_t op, char *id_name)
 {
 	vsm_t *v = parser_get_vsm(p);
+	int id_addr = parser_sym_ref(p, id_name);
 	int pc = parser_get_pc(p);
-
-	vsm_set_instr(v, pc, op, 0, i); 
+	vsm_set_instr(v, pc, op, 0, id_addr); 
 	parser_inc_pc(p);
-
 }
 
 

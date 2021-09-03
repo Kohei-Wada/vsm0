@@ -62,7 +62,7 @@ decl
 LHS 
 : ID
 {  
-	parser_cout(yyp, PUSHI, parser_sym_ref(yyp, $1));
+	parser_handle_id(yyp, PUSHI, $1);
 }
 ;
 
@@ -154,7 +154,7 @@ expr
 
 | ID                   
 { 
-	parser_cout(yyp, PUSH, parser_sym_ref(yyp, $1));
+	parser_handle_id(yyp, PUSH, $1);
 }
 
 | NUM                   
