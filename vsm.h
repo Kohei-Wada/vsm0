@@ -19,7 +19,7 @@ int vsm_get_max_pc(vsm_t *v);
 
 parser_t *vsm_get_parser(vsm_t *v);
 
-void vsm_set_dseg(vsm_t *v, int addr, int val);
+int vsm_set_dseg(vsm_t *v, int addr, int val);
 
 void vsm_set_debug(vsm_t *v, int debug);
 int vsm_is_debug(vsm_t *v);

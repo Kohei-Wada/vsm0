@@ -212,8 +212,17 @@ int parser_sym_decl(parser_t *p, char *name, int init_value)
 
 int parser_sym_ref(parser_t *p, char *name)
 {
+	int retval;
 	symtable_t *s = parser_get_symtable(p);
-	return symtable_ref(s, name);
+
+	retval = symtable_ref(s, name);
+
+	if (retval < 0) {
+		fprintf(stderr, "'%s' is undeclared\n", name);
+	}
+
+	return retval;
+
 }
 
 

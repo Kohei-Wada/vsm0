@@ -160,9 +160,13 @@ parser_t *vsm_get_parser(vsm_t *v)
 }
 
 
-void vsm_set_dseg(vsm_t *v, int addr, int val)
+int vsm_set_dseg(vsm_t *v, int addr, int val)
 {
+	if (addr < 0) 
+		return 1;
+
 	v->dseg[addr] = val;
+	return 0;
 }
 
 
