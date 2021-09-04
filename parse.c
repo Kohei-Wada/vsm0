@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h> 
+#include <string.h>
 
 #include "parse.h"
 #include "nmtable.h"
@@ -154,6 +155,7 @@ void parser_handle_ppmm(parser_t *p, op_t op, char *id_name, int priorize)
 		vsm_set_instr(v, pc + 1, COPY, 0, 0); 
 		vsm_set_instr(v, pc + 2, op, 0, 0); 
 	}
+
 	vsm_set_instr(v, pc + 3, POP, 0, addr); 
 	parser_set_pc(p, pc + 4);
 }
@@ -163,10 +165,21 @@ void parser_handle_id(parser_t *p, op_t op, char *id_name)
 {
 	vsm_t *v = parser_get_vsm(p);
 	int id_addr = parser_sym_ref(p, id_name);
+
+
+	/*if parser couldn't find id addr, declare the id*/
+	if (id_addr  < 0) {
+		fprintf(stderr, "'%s' is not declared\n", id_name);
+		char *tmp = parser_id_entry(p, id_name, strlen(id_name));
+		parser_sym_decl(p, tmp, 0);
+		id_addr = parser_sym_ref(p, id_name);
+	}
+
 	int pc = parser_get_pc(p);
 	vsm_set_instr(v, pc, op, 0, id_addr); 
 	parser_inc_pc(p);
 }
+
 
 
 void parser_handle_num(parser_t *p, int num)
@@ -212,17 +225,8 @@ int parser_sym_decl(parser_t *p, char *name, int init_value)
 
 int parser_sym_ref(parser_t *p, char *name)
 {
-	int retval;
 	symtable_t *s = parser_get_symtable(p);
-
-	retval = symtable_ref(s, name);
-
-	if (retval < 0) {
-		fprintf(stderr, "'%s' is undeclared\n", name);
-	}
-
-	return retval;
-
+	return symtable_ref(s, name);
 }
 
 

@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include <string.h>
 #include "instr.h"
 #include "parse.h"
 
@@ -85,13 +86,10 @@ const_int
 }
 
 
-
-
-
-
 LHS 
 : ID
 {  
+	/*put the id address on the stack*/
 	parser_handle_id(yyp, PUSHI, $1);
 }
 ;
@@ -203,6 +201,7 @@ expr
 
 | ID                   
 { 
+	/*put the id value on the stack*/
 	parser_handle_id(yyp, PUSH, $1);
 }
 
