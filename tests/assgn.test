@@ -1,6 +1,12 @@
 int a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z;
 int A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z;
 
+int my = 1, name = 2, is = 3, dragon = 4;
+int who = -1, are = -2, you = -3;
+int hello = 1, world = -2, goodbye = 3, world2 = -4;
+int maji = -1, saiko = 2, test = -3, omoroi = 4;
+
+
 a=1;
 b=2;
 c=3;
@@ -84,3 +90,9 @@ Y=25;
 Z=26;
 
 write A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z;
+
+
+write my, name, is, dragon;
+write who, are, you;
+write hello, world, goodbye, world2;
+write maji, saiko, test, omoroi;

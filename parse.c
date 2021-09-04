@@ -191,14 +191,22 @@ void parser_handle_relop(parser_t *p, op_t op)
 	vsm_set_instr(v, pc + 4, PUSHI, 0, 1); 
 
 	parser_set_pc(p, pc + 5);
-
 }
 
 
-int parser_sym_decl(parser_t *p, char *name)
+int parser_sym_decl(parser_t *p, char *name, int init_value)
 {
+	int retval = 0;
+	vsm_t *v = parser_get_vsm(p);
 	symtable_t *s = parser_get_symtable(p);
-	return symtable_decl(s, name);
+	retval = symtable_decl(s, name);
+
+	if (init_value && retval == 0) {
+		int addr = symtable_ref(s, name);
+		vsm_set_dseg(v, addr, init_value);
+	}
+
+	return retval;
 }
 
 

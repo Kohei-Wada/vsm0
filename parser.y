@@ -31,6 +31,8 @@ extern void yy_set_yyin(FILE *f);
 %left MULOP LAND LOR
 %right '!' PPMM UM
 
+%type <int_value> const_int
+
 %%
 
 
@@ -52,13 +54,39 @@ decl_list
 decl
 : TYPE ID
 {
-	parser_sym_decl(yyp, $2);
+	parser_sym_decl(yyp, $2, 0);
 }
 | decl ',' ID
 {
-	parser_sym_decl(yyp, $3);
+	parser_sym_decl(yyp, $3, 0);
+}
+
+| TYPE ID '=' const_int
+{
+	parser_sym_decl(yyp, $2, $4);
+}
+
+| decl ',' ID '=' const_int
+{
+	parser_sym_decl(yyp, $3, $5);
 }
 ;
+
+
+const_int
+: NUM
+{
+	$$ = $1;
+}
+
+| ADDOP NUM %prec UM
+{
+	$$ = $1 == SUB ? -$2 : $2;
+}
+
+
+
+
 
 
 LHS 

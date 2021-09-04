@@ -34,7 +34,6 @@ typedef struct vsm {
 
 static instr_t* vsm_get_instr(vsm_t *v, int pc);
 
-static void vsm_set_dseg(vsm_t *v, int addr, int val);
 static int vsm_get_dseg(vsm_t *v, int addr);
 
 static void vsm_set_jumped(vsm_t *v, int jumped);
@@ -161,7 +160,7 @@ parser_t *vsm_get_parser(vsm_t *v)
 }
 
 
-static void vsm_set_dseg(vsm_t *v, int addr, int val)
+void vsm_set_dseg(vsm_t *v, int addr, int val)
 {
 	v->dseg[addr] = val;
 }
