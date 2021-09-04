@@ -83,16 +83,13 @@ stmnt
 
 | write_stmnt ';'
 
-| READ LHS ';'
-{
-	parser_handle_simple_op(yyp, INPUT);
-}
+| read_stmnt ';'
+
 
 | error ';'
 {
 	yyerrok;
 }
-
 
 
 write_stmnt
@@ -106,6 +103,17 @@ write_stmnt
 	parser_handle_simple_op(yyp, OUTPUT);
 }
 
+
+read_stmnt
+: READ LHS 
+{
+	parser_handle_simple_op(yyp, INPUT);
+}
+
+| read_stmnt ',' LHS
+{
+	parser_handle_simple_op(yyp, INPUT);
+}
 
 
 expr
