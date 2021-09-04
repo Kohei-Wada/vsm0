@@ -3,12 +3,10 @@
 
 vsm="../vsm"
 
-retval=0
-
 
 print_result() 
 {
-	if [ "$retval" = 0 ];then
+	if [ "$?" = 0 ];then
 		echo -e "\033[32m ok \033[m"
 	else
 		echo -e "\033[31m test failed. \033[m"
@@ -24,29 +22,24 @@ fi
 
 echo -n "[assgn test]"
 diff <($vsm -f assgn.test) assgn.right
-retval="$?"
 print_result
 
 
 echo -n "[calc test]"
 diff <($vsm -f calc.test) calc.right
-retval="$?"
 print_result
 
 
 echo -n "[read test]"
 diff <( printf "1\n2\n3\n" | $vsm -f read.test) <( printf "1\n2\n3\n")
-retval="$?"
 print_result
 
 
 echo -n "[ppmm test]"
 diff <($vsm -f ppmm.test) ppmm.right
-retval="$?"
 print_result
 
 echo -n "[relop test]"
 diff <($vsm -f relop.test) relop.right
-retval="$?"
 print_result
 
