@@ -15,7 +15,7 @@ $(TARGET) : $(OBJS_PARSER) $(OBJS_VSM)
 
 
 y.tab.c : parser.y
-	yacc -o y.tab.c -d $<
+	yacc -vo y.tab.c -d $<
 
 lex.yy.c: lex.l y.tab.h
 	lex $<
@@ -34,5 +34,5 @@ test: all
 clean : 
 	rm -f vsm *.o
 	rm -f lex.yy.c y.tab.c
-	rm -f y.tab.h
+	rm -f y.tab.h y.output
 
