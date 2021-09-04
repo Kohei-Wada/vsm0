@@ -201,6 +201,7 @@ int vsm_get_max_pc(vsm_t *v)
 static void vsm_print_instr(vsm_t *v, int loc)
 {
 	instr_t *i = vsm_get_instr(v, loc);
+	printf("%d  ", loc);
 	instr_display(i);
 }
 
@@ -323,6 +324,10 @@ int vsm_start(vsm_t *v, int start_addr)
 
 		vsm_inc_instr_count(v);
 		vsm_handle_instr(v, vsm_get_pc(v));
+
+	/*TODO increment the pc every time, JUMP instruction becomes difficult to 
+	 * understand, so it may be better to fix it.*/
+
 		vsm_inc_pc(v);
 	}
 
