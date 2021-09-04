@@ -17,6 +17,7 @@ typedef struct vsm {
 
 	parser_t *parser;
 
+	int jumped;
 	int debug;       // debug flag
 	int trace;       // trace flag
 	int halt;        
@@ -35,6 +36,10 @@ static instr_t* vsm_get_instr(vsm_t *v, int pc);
 
 static void vsm_set_dseg(vsm_t *v, int addr, int val);
 static int vsm_get_dseg(vsm_t *v, int addr);
+
+static void vsm_set_jumped(vsm_t *v, int jumped);
+static int vsm_get_jumped(vsm_t *v);
+
 
 static stack_t *vsm_get_stack(vsm_t *v);
 
@@ -131,6 +136,18 @@ int vsm_get_freg(vsm_t *v)
 	return v->freg;
 }
 
+static void vsm_set_jumped(vsm_t *v, int jumped)
+{
+	v->jumped = jumped;
+}
+
+static int vsm_get_jumped(vsm_t *v)
+{
+	return v->jumped;
+}
+
+
+
 
 static stack_t *vsm_get_stack(vsm_t *v)
 {
@@ -201,7 +218,7 @@ int vsm_get_max_pc(vsm_t *v)
 static void vsm_print_instr(vsm_t *v, int loc)
 {
 	instr_t *i = vsm_get_instr(v, loc);
-	printf("%d  ", loc);
+	printf("%4d  ", loc);
 	instr_display(i);
 }
 
@@ -325,10 +342,13 @@ int vsm_start(vsm_t *v, int start_addr)
 		vsm_inc_instr_count(v);
 		vsm_handle_instr(v, vsm_get_pc(v));
 
-	/*TODO increment the pc every time, JUMP instruction becomes difficult to 
-	 * understand, so it may be better to fix it.*/
 
-		vsm_inc_pc(v);
+		if (!vsm_get_jumped(v)) {
+			vsm_inc_pc(v);
+		}
+		else {
+			vsm_set_jumped(v, 0);
+		}
 	}
 
 	return 0;
@@ -364,6 +384,7 @@ int vsm_init(vsm_t **v)
 	vsm_set_halt(*v, 0);
 	vsm_set_max_pc(*v, 0);
 	vsm_set_instr_count(*v, 0);
+	vsm_set_jumped(*v, 0);
 
 	return 0;
 
@@ -651,6 +672,7 @@ static void vsm_handle_jump(vsm_t *v)
 	int addr = instr_get_addr(i);
 
 	vsm_set_pc(v, addr);
+	vsm_set_jumped(v, 1);
 }
 
 
@@ -665,8 +687,10 @@ static void vsm_handle_blt(vsm_t *v)
 
 	int val = stack_pop(s);
 
-	if (val < 0)
+	if (val < 0) {
 		vsm_set_pc(v, addr);
+		vsm_set_jumped(v, 1);
+	}
 }
 
 
@@ -681,8 +705,10 @@ static void vsm_handle_ble(vsm_t *v)
 
 	int val = stack_pop(s);
 
-	if (val <= 0)
+	if (val <= 0) {
 		vsm_set_pc(v, addr);
+		vsm_set_jumped(v, 1);
+	}
 }
 
 /*Branch on EQual to*/ 
@@ -696,8 +722,11 @@ static void vsm_handle_beq(vsm_t *v)
 
 	int val = stack_pop(s);
 
-	if (val == 0)
+	if (val == 0) {
 		vsm_set_pc(v, addr);
+		vsm_set_jumped(v, 1);
+	}
+
 }
 
 /*Branch on Not Equal to*/
@@ -711,8 +740,10 @@ static void vsm_handle_bne(vsm_t *v)
 
 	int val = stack_pop(s);
 
-	if (val != 0)
+	if (val != 0) {
 		vsm_set_pc(v, addr);
+		vsm_set_jumped(v, 1);
+	}
 }
 
 
@@ -727,8 +758,10 @@ static void vsm_handle_bge(vsm_t *v)
 
 	int val = stack_pop(s);
 
-	if (val >= 0)
+	if (val >= 0) {
 		vsm_set_pc(v, addr);
+		vsm_set_jumped(v, 1);
+	}
 }
 
 
@@ -743,8 +776,10 @@ static void vsm_handle_bgt(vsm_t *v)
 
 	int val = stack_pop(s);
 
-	if (val > 0)
+	if (val > 0) {
 		vsm_set_pc(v, addr);
+		vsm_set_jumped(v, 1);
+	}
 }
 
 
@@ -759,6 +794,7 @@ static void vsm_handle_call(vsm_t *v)
 	int addr = instr_get_addr(i);
 
 	vsm_set_pc(v, addr);
+	vsm_set_jumped(v, 1);
 }
 
 
@@ -766,6 +802,7 @@ static void vsm_handle_ret(vsm_t *v)
 {
 	stack_t *s = vsm_get_stack(v);
 	vsm_set_pc(v, stack_pop(s));
+	vsm_set_jumped(v, 1);
 }
 
 
