@@ -28,3 +28,5 @@ write !1 ;
 write !2 ; 
 write !0 ; 
 write 3 + !0 ; 
+write -3 + -3;
+write -32 + 32 - -100;

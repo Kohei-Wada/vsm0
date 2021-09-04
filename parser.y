@@ -28,7 +28,7 @@ extern void yy_set_yyin(FILE *f);
 %right '='
 %left ADDOP 
 %left MULOP LAND LOR
-%right '!' PPMM
+%right '!' PPMM UM
 
 %%
 
@@ -142,6 +142,12 @@ expr
 | PPMM ID
 {
 	parser_handle_ppmm(yyp, $1, $2, 1); 
+}
+
+| ADDOP expr %prec UM
+{
+	if ($1 == SUB)
+		parser_handle_simple_op(yyp, CSIGN); 
 }
 
 | ID PPMM
