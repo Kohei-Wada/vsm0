@@ -1,0 +1,19 @@
+int i, j, k;
+
+i = 1;
+j = 100;
+k = 1;
+
+write i < j;
+write i <= j;
+write i == j;
+write i != j;
+write i >= j;
+write i > j;
+
+write i < k;
+write i <= k;
+write i == k;
+write i != k;
+write i >= k;
+write i > k;

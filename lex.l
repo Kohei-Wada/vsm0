@@ -34,6 +34,15 @@ other .
 
 "||"      { yylval.op = OR;  return LOR; }
 "&&"      { yylval.op = AND; return LAND; }
+
+"<"       { yylval.op = BLT; return RELOP; }
+"<="      { yylval.op = BLE; return RELOP; }
+"=="      { yylval.op = BEQ; return RELOP; }
+"!="      { yylval.op = BNE; return RELOP; }
+">="      { yylval.op = BGE; return RELOP; }
+">"       { yylval.op = BGT; return RELOP; }
+
+
 "int"     { return TYPE; }
 "write"   { yylval.op = OUTPUT; return WRITE; }
 "read"    { yylval.op = INPUT;  return READ; }

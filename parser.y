@@ -21,8 +21,9 @@ extern void yy_set_yyin(FILE *f);
 };
 
 %token TYPE
-%token <int_value> NUM ADDOP MULOP LAND LOR WRITE READ PPMM
+%token <int_value> NUM
 %token <name> ID
+%token <op> ADDOP MULOP LAND LOR WRITE READ PPMM RELOP
 
 %right '='
 %left ADDOP 
@@ -131,6 +132,12 @@ expr
 { 
 	parser_handle_simple_op(yyp, $2);
 }
+
+| expr RELOP expr       
+{ 
+	parser_handle_relop(yyp, $2);
+}
+
 
 | PPMM ID
 {

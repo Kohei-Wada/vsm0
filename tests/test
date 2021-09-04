@@ -45,3 +45,8 @@ diff <($vsm -f ppmm.test) ppmm.right
 retval="$?"
 print_result
 
+echo -n "[relop test]"
+diff <($vsm -f relop.test) relop.right
+retval="$?"
+print_result
+

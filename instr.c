@@ -51,8 +51,8 @@ static char *scode[] = {
 	"Nop", "  =" , "  +", "  -","  *" , "  /", "  %",
 	"  -'", "and", "or", "not", "comp", "copy", "push",
 	"push-i", "remove", "pop", " ++", " --", "setFR",
-	"++FR", "--FR", "jump", "<0 ?", "<=0 ?", "==0 ?",
-	"!=0 ?", ">=0 ?", ">0 ?", "call", "return",
+	"++FR", "--FR", "jump", " < 0 ?", " <= 0 ?", " == 0 ?",
+	" != 0 ?", " >= 0 ?", " > 0 ?", "call", "return",
 	"halt", "input", "output",
 };
 

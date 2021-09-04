@@ -159,6 +159,16 @@ void parser_handle_ppmm(parser_t *p, op_t op, char *id_name, int priorize)
 }
 
 
+void parser_handle_id(parser_t *p, op_t op, char *id_name)
+{
+	vsm_t *v = parser_get_vsm(p);
+	int id_addr = parser_sym_ref(p, id_name);
+	int pc = parser_get_pc(p);
+	vsm_set_instr(v, pc, op, 0, id_addr); 
+	parser_inc_pc(p);
+}
+
+
 void parser_handle_num(parser_t *p, int num)
 {
 	vsm_t *v = parser_get_vsm(p);
@@ -169,10 +179,22 @@ void parser_handle_num(parser_t *p, int num)
 }
 
 
-char *parser_id_entry(parser_t *p, char *name, int len)
+void parser_handle_relop(parser_t *p, op_t op)
 {
-	nmtable_t *n = parser_get_nmtable(p);
-	return nmtable_entry(n, name, len);
+	vsm_t *v = parser_get_vsm(p);
+	int pc = parser_get_pc(p);
+
+	/*Since the program counter is incremented each time the instruction is executed, 
+	 * set the JUMP instruction just befor the place where you want to JUMP.*/
+
+	vsm_set_instr(v, pc, COMP, 0, 0); 
+	vsm_set_instr(v, pc + 1, op, 0, pc + 3);  
+	vsm_set_instr(v, pc + 2, PUSHI, 0, 0); 
+	vsm_set_instr(v, pc + 3, JUMP, 0, pc + 4); 
+	vsm_set_instr(v, pc + 4, PUSHI, 0, 1); 
+
+	parser_set_pc(p, pc + 5);
+
 }
 
 
@@ -190,13 +212,12 @@ int parser_sym_ref(parser_t *p, char *name)
 }
 
 
-void parser_handle_id(parser_t *p, op_t op, char *id_name)
-{
-	vsm_t *v = parser_get_vsm(p);
-	int id_addr = parser_sym_ref(p, id_name);
-	int pc = parser_get_pc(p);
-	vsm_set_instr(v, pc, op, 0, id_addr); 
-	parser_inc_pc(p);
-}
+/**************************************************************************/
 
+
+char *parser_id_entry(parser_t *p, char *name, int len)
+{
+	nmtable_t *n = parser_get_nmtable(p);
+	return nmtable_entry(n, name, len);
+}
 
