@@ -166,15 +166,6 @@ void parser_handle_id(parser_t *p, op_t op, char *id_name)
 	vsm_t *v = parser_get_vsm(p);
 	int id_addr = parser_sym_ref(p, id_name);
 
-
-	/*if parser couldn't find id addr, declare the id*/
-	if (id_addr  < 0) {
-		fprintf(stderr, "'%s' is not declared\n", id_name);
-		char *tmp = parser_id_entry(p, id_name, strlen(id_name));
-		parser_sym_decl(p, tmp, 0);
-		id_addr = parser_sym_ref(p, id_name);
-	}
-
 	int pc = parser_get_pc(p);
 	vsm_set_instr(v, pc, op, 0, id_addr); 
 	parser_inc_pc(p);
@@ -225,8 +216,19 @@ int parser_sym_decl(parser_t *p, char *name, int init_value)
 
 int parser_sym_ref(parser_t *p, char *name)
 {
+	int id_addr;
 	symtable_t *s = parser_get_symtable(p);
-	return symtable_ref(s, name);
+	id_addr = symtable_ref(s, name);
+
+	/*if parser could not find id, declera id*/
+	if (id_addr  < 0) {
+		fprintf(stderr, "warning : '%s' is not declared\n", name);
+		char *tmp = parser_id_entry(p, name, strlen(name));
+		symtable_decl(s, tmp);
+		id_addr = symtable_ref(s, name);
+	}
+
+	return id_addr;
 }
 
 

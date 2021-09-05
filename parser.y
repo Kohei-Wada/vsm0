@@ -36,6 +36,7 @@ extern void yy_set_yyin(FILE *f);
 
 %%
 
+/*TODO change program to declare variables at any time.*/
 
 program 
 : decl_list s_list
