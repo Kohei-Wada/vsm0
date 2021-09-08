@@ -11,7 +11,6 @@ int parser_read(parser_t *p);
 
 int parser_set_input_file(parser_t *p, const char *file_name);
 
-void parser_handle_num(parser_t *p, int num);
 void parser_handle_id(parser_t *p, op_t op, char *id_name);
 void parser_handle_relop(parser_t *p, op_t op);
 

@@ -270,7 +270,13 @@ expr
 
 | NUM                   
 { 
-	parser_handle_num(yyp, $1);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+
+	vsm_set_instr(v, pc, PUSHI, 0, $1); 
+	parser_inc_pc(yyp);
+
+
 }
 ;
 
