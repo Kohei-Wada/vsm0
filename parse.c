@@ -143,20 +143,6 @@ void parser_handle_id(parser_t *p, op_t op, char *id_name)
 }
 
 
-void parser_handle_relop(parser_t *p, op_t op)
-{
-	vsm_t *v = parser_get_vsm(p);
-	int pc = parser_get_pc(p);
-
-	vsm_set_instr(v, pc, COMP, 0, 0); 
-	vsm_set_instr(v, pc + 1, op, 0, pc + 4);  
-	vsm_set_instr(v, pc + 2, PUSHI, 0, 0); 
-	vsm_set_instr(v, pc + 3, JUMP, 0, pc + 5); 
-	vsm_set_instr(v, pc + 4, PUSHI, 0, 1); 
-
-	parser_set_pc(p, pc + 5);
-}
-
 
 int parser_sym_decl(parser_t *p, char *name, int init_value)
 {
