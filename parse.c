@@ -31,7 +31,7 @@ static void parser_set_vsm(parser_t *p, vsm_t *v)
 }
 
 
-static vsm_t* parser_get_vsm(parser_t *p)
+vsm_t* parser_get_vsm(parser_t *p)
 {
 	return p->vsm;
 }
@@ -47,6 +47,7 @@ static nmtable_t* parser_get_nmtable(parser_t *p)
 {
 	return p->nmtable;
 }
+
 
 static void parser_set_symtable(parser_t *p, symtable_t *s)
 {
@@ -79,10 +80,11 @@ int parser_set_input_file(parser_t *p, const char *file_name)
 }
 
 
-static int parser_get_pc(parser_t *p)
+int parser_get_pc(parser_t *p)
 {
 	return p->pc;
 }
+
 
 
 static void parser_set_pc(parser_t *p, int value)
@@ -127,15 +129,6 @@ int parser_read(parser_t *p)
 	yyl_set_parser(p);
 
 	return yyparse();
-}
-
-
-void parser_handle_simple_op(parser_t *p, op_t op)
-{
-	vsm_t *v = parser_get_vsm(p);
-	int pc = parser_get_pc(p);
-	vsm_set_instr(v, pc, op, 0, 0); 
-	parser_inc_pc(p);
 }
 
 

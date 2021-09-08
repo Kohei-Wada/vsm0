@@ -11,11 +11,15 @@ int parser_read(parser_t *p);
 
 int parser_set_input_file(parser_t *p, const char *file_name);
 
-void parser_handle_simple_op(parser_t *p, op_t op);
 void parser_handle_num(parser_t *p, int num);
 void parser_handle_ppmm(parser_t *p, op_t op, char *ppmm, int priorize);
 void parser_handle_id(parser_t *p, op_t op, char *id_name);
 void parser_handle_relop(parser_t *p, op_t op);
+
+
+vsm_t *parser_get_vsm(parser_t *p);
+int parser_get_pc(parser_t *p);
+void parser_inc_pc(parser_t *p);
 
 
 int parser_sym_decl(parser_t *p, char *name, int init_value);

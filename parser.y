@@ -3,6 +3,7 @@
 #include <string.h>
 #include "instr.h"
 #include "parse.h"
+#include "vsm.h"
 
 static parser_t *yyp = NULL;
 
@@ -32,7 +33,7 @@ extern void yy_set_yyin(FILE *f);
 %left MULOP LAND LOR
 %right '!' PPMM UM
 
-%type <int_value> const_int
+%type <int_value> const_int expr
 
 %%
 
@@ -41,7 +42,10 @@ extern void yy_set_yyin(FILE *f);
 program 
 : decl_list s_list
 {
-	parser_handle_simple_op(yyp, HALT);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, HALT, 0, 0); 
+	parser_inc_pc(yyp);
 	YYACCEPT; 
 }
 ;
@@ -56,7 +60,7 @@ decl_list
 decl
 : TYPE ID
 {
-	parser_sym_decl(yyp, $2, 0);
+	parser_sym_decl(yyp, $2,0);
 }
 | decl ',' ID
 {
@@ -105,7 +109,10 @@ s_list
 stmnt
 : expr ';'
 {
-	parser_handle_simple_op(yyp, REMOVE);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, REMOVE, 0, 0); 
+	parser_inc_pc(yyp);
 }
 
 | write_stmnt ';'
@@ -122,52 +129,80 @@ stmnt
 write_stmnt
 : WRITE expr 
 {
-	parser_handle_simple_op(yyp, OUTPUT);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, OUTPUT, 0, 0); 
+	parser_inc_pc(yyp);
 }
 
 | write_stmnt ',' expr 
 {
-	parser_handle_simple_op(yyp, OUTPUT);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, OUTPUT, 0, 0); 
+	parser_inc_pc(yyp);
 }
 
 
 read_stmnt
 : READ LHS 
 {
-	parser_handle_simple_op(yyp, INPUT);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, INPUT, 0, 0); 
+	parser_inc_pc(yyp);
 }
 
 | read_stmnt ',' LHS
 {
-	parser_handle_simple_op(yyp, INPUT);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, INPUT, 0, 0); 
+	parser_inc_pc(yyp);
 }
 
 
 expr
 : LHS '=' expr
 {
-	parser_handle_simple_op(yyp, ASSGN);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, ASSGN, 0, 0); 
+	parser_inc_pc(yyp);
 }
 
 | expr ADDOP expr       
 { 
-	parser_handle_simple_op(yyp, $2);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, $2, 0, 0); 
+	parser_inc_pc(yyp);
 }
 
 | expr MULOP expr       
 { 
-	parser_handle_simple_op(yyp, $2);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, $2, 0, 0); 
+	parser_inc_pc(yyp);
 }
 
 | expr LAND expr       
 { 
-	parser_handle_simple_op(yyp, $2);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, $2, 0, 0); 
+	parser_inc_pc(yyp);
 }
 
 | expr LOR expr       
 { 
-	parser_handle_simple_op(yyp, $2);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, $2, 0, 0); 
+	parser_inc_pc(yyp);
 }
+
 
 | expr RELOP expr       
 { 
@@ -181,8 +216,12 @@ expr
 
 | ADDOP expr %prec UM
 {
-	if ($1 == SUB)
-		parser_handle_simple_op(yyp, CSIGN); 
+	if ($1 == SUB) {
+		vsm_t *v = parser_get_vsm(yyp);
+		int pc = parser_get_pc(yyp);
+		vsm_set_instr(v, pc, CSIGN, 0, 0); 
+		parser_inc_pc(yyp);
+	}
 }
 
 | ID PPMM
@@ -192,7 +231,10 @@ expr
 
 | '!' expr
 {
-	parser_handle_simple_op(yyp, NOT);
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, NOT, 0, 0); 
+	parser_inc_pc(yyp);
 }
 
 | '(' expr ')'          
