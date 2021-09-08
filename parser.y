@@ -211,7 +211,32 @@ expr
 
 | PPMM ID
 {
-	parser_handle_ppmm(yyp, $1, $2, 1); 
+	vsm_t *v = parser_get_vsm(yyp);
+	int addr = parser_sym_ref(yyp, $2);
+	int pc = parser_get_pc(yyp);
+
+	vsm_set_instr(v, pc, PUSH, 0, addr); 
+
+	vsm_set_instr(v, pc + 1, $1, 0, 0); 
+	vsm_set_instr(v, pc + 2, COPY, 0, 0); 
+	vsm_set_instr(v, pc + 3, POP, 0, addr); 
+	parser_set_pc(yyp, pc + 4);
+}
+
+| ID PPMM
+{
+
+	vsm_t *v = parser_get_vsm(yyp);
+	int addr = parser_sym_ref(yyp, $1);
+	int pc = parser_get_pc(yyp);
+
+	vsm_set_instr(v, pc, PUSH, 0, addr); 
+
+	vsm_set_instr(v, pc + 1, COPY, 0, 0); 
+	vsm_set_instr(v, pc + 2, $2, 0, 0); 
+	vsm_set_instr(v, pc + 3, POP, 0, addr); 
+	parser_set_pc(yyp, pc + 4);
+
 }
 
 | ADDOP expr %prec UM
@@ -222,11 +247,6 @@ expr
 		vsm_set_instr(v, pc, CSIGN, 0, 0); 
 		parser_inc_pc(yyp);
 	}
-}
-
-| ID PPMM
-{
-	parser_handle_ppmm(yyp, $2, $1, 0); 
 }
 
 | '!' expr

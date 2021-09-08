@@ -87,7 +87,7 @@ int parser_get_pc(parser_t *p)
 
 
 
-static void parser_set_pc(parser_t *p, int value)
+void parser_set_pc(parser_t *p, int value)
 {
 	p->pc = value;
 }
@@ -129,28 +129,6 @@ int parser_read(parser_t *p)
 	yyl_set_parser(p);
 
 	return yyparse();
-}
-
-
-void parser_handle_ppmm(parser_t *p, op_t op, char *id_name, int priorize)
-{
-	vsm_t *v = parser_get_vsm(p);
-	int addr = parser_sym_ref(p, id_name);
-	int pc = parser_get_pc(p);
-
-	vsm_set_instr(v, pc, PUSH, 0, addr); 
-
-	if (priorize) {
-		vsm_set_instr(v, pc + 1, op, 0, 0); 
-		vsm_set_instr(v, pc + 2, COPY, 0, 0); 
-	}
-	else {
-		vsm_set_instr(v, pc + 1, COPY, 0, 0); 
-		vsm_set_instr(v, pc + 2, op, 0, 0); 
-	}
-
-	vsm_set_instr(v, pc + 3, POP, 0, addr); 
-	parser_set_pc(p, pc + 4);
 }
 
 
