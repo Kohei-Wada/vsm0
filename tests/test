@@ -43,3 +43,7 @@ echo -n "[relop test]"
 diff <($vsm -f relop.test) relop.right
 print_result
 
+echo -n "[ternary op test]"
+diff <($vsm -f ternaryop.test) ternaryop.right
+print_result
+

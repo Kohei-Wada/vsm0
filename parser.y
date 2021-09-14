@@ -28,6 +28,7 @@ extern void yy_set_yyin(FILE *f);
 %token <op> ADDOP MULOP LAND LOR WRITE READ PPMM RELOP
 
 %right '='
+%right '?' ':'
 %left RELOP
 %left ADDOP 
 %left MULOP LAND LOR
@@ -171,6 +172,32 @@ expr
 	parser_inc_pc(yyp);
 }
 
+| expr '?' 
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+
+	$<int_value>$ = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, BEQ, 0, -1);
+	parser_inc_pc(yyp);
+}
+
+  expr ':'
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	$<int_value>$ = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, JUMP, 0, -1);
+	parser_inc_pc(yyp);
+	vsm_back_patching(v, $<int_value>3, parser_get_pc(yyp));
+}
+  expr
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	vsm_back_patching(v, $<int_value>6, parser_get_pc(yyp));
+}
+
+
 | expr ADDOP expr       
 { 
 	vsm_t *v = parser_get_vsm(yyp);
@@ -216,9 +243,6 @@ expr
 	vsm_set_instr(v, pc + 4, PUSHI, 0, 1); 
 
 	parser_set_pc(yyp, pc + 5);
-
-
-
 }
 
 | PPMM ID

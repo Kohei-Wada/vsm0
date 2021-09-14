@@ -14,7 +14,6 @@ typedef struct vsm {
 	int *dseg;       // data segment
 
 	stack_t *stack;  // stack object
-
 	parser_t *parser;
 
 	int jumped;

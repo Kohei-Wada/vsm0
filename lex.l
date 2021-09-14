@@ -13,7 +13,7 @@ letter [a-zA-Z_]
 id     {letter}({letter}|[0-9])*
 
 integer 0|[1-9][0-9]*
-symbol [();!,=]
+symbol [?:();!,=]
 other .
 
 
