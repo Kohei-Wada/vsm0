@@ -22,7 +22,8 @@ extern void yy_set_yyin(FILE *f);
 	char *name;
 };
 
-%token TYPE
+%token TYPE IF ELSE WHILE DO FOR
+%token SWITCH CASE DEFAULT BREAK CONTI 
 %token <int_value> NUM
 %token <name> ID
 %token <op> ADDOP MULOP LAND LOR WRITE READ PPMM RELOP
@@ -34,7 +35,7 @@ extern void yy_set_yyin(FILE *f);
 %left MULOP LAND LOR
 %right '!' PPMM UM
 
-%type <int_value> const_int expr
+%type <int_value> const_int expr if_part
 
 %%
 
@@ -92,15 +93,6 @@ const_int
 }
 
 
-LHS 
-: ID
-{  
-	/*put the id address on the stack*/
-	parser_handle_id(yyp, PUSHI, $1);
-}
-;
-
-
 s_list 
 : stmnt
 | s_list stmnt
@@ -116,10 +108,40 @@ stmnt
 	parser_inc_pc(yyp);
 }
 
+| ';'
+
+| '{' s_list '}'
+
 | write_stmnt ';'
 
 | read_stmnt ';'
 
+| if_part 
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_back_patching(v, $1, pc);
+}
+
+
+| if_part ELSE
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	$<int_value>$ = pc;
+
+	vsm_set_instr(v, pc, JUMP, 0, -1); 
+	parser_inc_pc(yyp);
+
+	vsm_back_patching(v, $1, pc + 1);
+
+}
+
+stmnt 
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	vsm_back_patching(v, $<int_value>3, parser_get_pc(yyp));
+}
 
 | error ';'
 {
@@ -313,6 +335,32 @@ expr
 	parser_inc_pc(yyp);
 }
 ;
+
+
+if_part 
+: IF '(' expr ')'  
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	$<int_value>$ = pc;
+	vsm_set_instr(v, pc, BEQ, 0, -1);
+	parser_inc_pc(yyp);
+}
+
+stmnt
+{
+	$$ = $<int_value>5;
+}
+
+
+LHS 
+: ID
+{  
+	/*put the id address on the stack*/
+	parser_handle_id(yyp, PUSHI, $1);
+}
+;
+
 
 %%
 

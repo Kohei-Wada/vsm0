@@ -47,3 +47,7 @@ echo -n "[ternary op test]"
 diff <($vsm -f ternaryop.test) ternaryop.right
 print_result
 
+echo -n "[if test]"
+diff <($vsm -f if.test) if.right
+print_result
+

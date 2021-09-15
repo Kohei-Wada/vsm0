@@ -13,7 +13,7 @@ letter [a-zA-Z_]
 id     {letter}({letter}|[0-9])*
 
 integer 0|[1-9][0-9]*
-symbol [?:();!,=]
+symbol [?:{}();!,=]
 other .
 
 
@@ -44,6 +44,9 @@ other .
 
 
 "int"     { return TYPE; }
+"for"     { return FOR; }
+"if"      { return IF; }
+"else"    { return ELSE; }
 "write"   { yylval.op = OUTPUT; return WRITE; }
 "read"    { yylval.op = INPUT;  return READ; }
 

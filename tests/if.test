@@ -1,0 +1,29 @@
+int i = 100, j = 20, k = 2;
+
+
+if (i > 0) {
+	write 1;
+} else {
+	write 0;
+}
+
+
+if (i < j) {
+	write 1;
+} else {
+	write 0;
+}
+
+if (k < i) {
+	write 1;
+} else {
+	write 0;
+}
+
+
+if (1) write 1;
+else write 0;
+
+
+if (0) write 0;
+else { write 1; }
