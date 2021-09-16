@@ -4,6 +4,7 @@
 typedef struct vsm vsm_t;
 typedef enum op op_t;
 typedef struct parser parser_t;
+typedef struct jmpchain jmpchain_t;
 
 int parser_init(parser_t **p, vsm_t *v);
 void parser_free(parser_t *p);
@@ -18,6 +19,9 @@ void parser_handle_relop(parser_t *p, op_t op);
 vsm_t *parser_get_vsm(parser_t *p);
 int parser_get_pc(parser_t *p);
 void parser_inc_pc(parser_t *p);
+
+jmpchain_t *parser_get_jchain(parser_t *p);
+
 
 
 void parser_set_pc(parser_t *p, int value);

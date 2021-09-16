@@ -4,6 +4,7 @@
 #include "instr.h"
 #include "parse.h"
 #include "vsm.h"
+#include "jmpchain.h"
 
 static parser_t *yyp = NULL;
 
@@ -35,7 +36,7 @@ extern void yy_set_yyin(FILE *f);
 %left MULOP LAND LOR
 %right '!' PPMM UM
 
-%type <int_value> const_int expr if_part
+%type <int_value> const_int expr if_part opt_expr tst_expr
 
 %%
 
@@ -123,7 +124,6 @@ stmnt
 	vsm_back_patching(v, $1, pc);
 }
 
-
 | if_part ELSE
 {
 	vsm_t *v = parser_get_vsm(yyp);
@@ -143,10 +143,51 @@ stmnt
 	vsm_back_patching(v, $<int_value>3, parser_get_pc(yyp));
 }
 
+
+| FOR '(' opt_expr ';' 
+{
+	jmpchain_t *j = parser_get_jchain(yyp);
+	jmpchain_nestin(j, FOR);
+}
+
+  tst_expr ';' 
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	jmpchain_t *j = parser_get_jchain(yyp);
+
+	vsm_set_instr(v, pc, BNE, 0, -1); 
+	parser_inc_pc(yyp);
+
+	jmpchain_break(j, JUMP);
+}
+
+  opt_expr ')'
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+
+	vsm_set_instr(v, pc, JUMP, 0, $3); 
+	parser_inc_pc(yyp);
+
+	vsm_back_patching(v, $6, pc + 1);
+}
+
+
+  stmnt
+{
+	jmpchain_t *j = parser_get_jchain(yyp);
+	jmpchain_conti(j);
+	jmpchain_nestout(j, $6+2);
+
+}
+
+
 | error ';'
 {
 	yyerrok;
 }
+
 
 
 write_stmnt
@@ -337,6 +378,7 @@ expr
 ;
 
 
+
 if_part 
 : IF '(' expr ')'  
 {
@@ -347,9 +389,41 @@ if_part
 	parser_inc_pc(yyp);
 }
 
-stmnt
+  stmnt
 {
 	$$ = $<int_value>5;
+}
+
+
+opt_expr
+:
+{
+	$$ = parser_get_pc(yyp);
+}
+| expr
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, REMOVE, 0, 0);
+	parser_inc_pc(yyp);
+	$$ = pc + 1;
+}
+;
+
+
+tst_expr
+: 
+{
+	vsm_t *v = parser_get_vsm(yyp);
+	int pc = parser_get_pc(yyp);
+	vsm_set_instr(v, pc, REMOVE, 0, 0);
+	parser_inc_pc(yyp);
+	$$ = pc + 1;
+}
+
+| expr
+{
+	$$ = parser_get_pc(yyp);
 }
 
 
@@ -360,7 +434,6 @@ LHS
 	parser_handle_id(yyp, PUSHI, $1);
 }
 ;
-
 
 %%
 

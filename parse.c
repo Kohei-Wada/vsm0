@@ -7,6 +7,7 @@
 #include "symtable.h"
 #include "instr.h"
 #include "vsm.h"
+#include "jmpchain.h"
 
 int yyparse();
 void yy_set_parser(parser_t *p);
@@ -20,6 +21,7 @@ typedef struct parser{
 	nmtable_t *nmtable;
 	symtable_t *symtable;
 	vsm_t *vsm;
+	jmpchain_t *jchain;
 	int pc;
 	FILE *input_file;
 } parser_t;
@@ -36,6 +38,11 @@ vsm_t* parser_get_vsm(parser_t *p)
 	return p->vsm;
 }
 
+
+jmpchain_t *parser_get_jchain(parser_t *p)
+{
+	return p->jchain;
+}
 
 static void parser_set_nmtable(parser_t *p, nmtable_t *n)
 {
@@ -92,34 +99,6 @@ void parser_set_pc(parser_t *p, int value)
 	p->pc = value;
 }
 
-
-int parser_init(parser_t **p, vsm_t *v)
-{
-	*p = malloc(sizeof(parser_t));
-
-	if (!(*p))
-		return 1;
-
-	nmtable_init(&(*p)->nmtable);
-	symtable_init(&(*p)->symtable);
-
-	(*p)->vsm = v;
-	(*p)->pc = 0;
-	(*p)->input_file = NULL;
-
-	return 0;
-}
-
-
-void parser_free(parser_t *p)
-{
-	nmtable_free(p->nmtable);
-	symtable_free(p->symtable);
-
-	if (p->input_file)
-		fclose(p->input_file);
-	free(p);
-}
 
 
 int parser_read(parser_t *p)
@@ -178,6 +157,35 @@ int parser_sym_ref(parser_t *p, char *name)
 }
 
 
+int parser_init(parser_t **p, vsm_t *v)
+{
+	*p = malloc(sizeof(parser_t));
+
+	if (!(*p))
+		return 1;
+
+	nmtable_init(&(*p)->nmtable);
+	symtable_init(&(*p)->symtable);
+	jmpchain_init(&(*p)->jchain, *p);
+
+	(*p)->vsm = v;
+	(*p)->pc = 0;
+	(*p)->input_file = NULL;
+
+	return 0;
+}
+
+
+void parser_free(parser_t *p)
+{
+	nmtable_free(p->nmtable);
+	symtable_free(p->symtable);
+	jmpchain_free(p->jchain);
+
+	if (p->input_file)
+		fclose(p->input_file);
+	free(p);
+}
 /**************************************************************************/
 
 
