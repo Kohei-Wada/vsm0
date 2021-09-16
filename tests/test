@@ -51,3 +51,9 @@ echo -n "[if test]"
 diff <($vsm -f if.test) if.right
 print_result
 
+
+echo -n "[for test]"
+diff <($vsm -f for.test) for.right
+print_result
+
+
