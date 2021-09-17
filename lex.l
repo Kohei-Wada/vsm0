@@ -47,6 +47,7 @@ other .
 "for"     { return FOR; }
 "if"      { return IF; }
 "else"    { return ELSE; }
+"while"   { return WHILE; }
 "write"   { yylval.op = OUTPUT; return WRITE; }
 "read"    { yylval.op = INPUT;  return READ; }
 

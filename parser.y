@@ -159,15 +159,32 @@ stmnt
 	parser_back_patching(yyp, $6, pc + 1);
 }
 
-
   stmnt
 {
 	jmpchain_t *j = parser_get_jchain(yyp);
 	jmpchain_conti(j);
 	jmpchain_nestout(j, $6+2);
-
 }
 
+| WHILE 
+{
+	jmpchain_t *j = parser_get_jchain(yyp);
+	jmpchain_nestin(j, FOR);
+	$<int_value>$ = parser_get_pc(yyp);
+}
+
+  '(' expr ')'
+{
+	jmpchain_t *j = parser_get_jchain(yyp);
+	jmpchain_break(j, BEQ);
+}
+
+  stmnt
+{
+	jmpchain_t *j = parser_get_jchain(yyp);
+	jmpchain_conti(j);
+	jmpchain_nestout(j, $<int_value>2);
+}
 
 | error ';'
 {
@@ -408,5 +425,4 @@ void yy_set_yyin(FILE *f)
 	extern FILE *yyin;
 	yyin = f;
 }
-
 

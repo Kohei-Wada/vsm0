@@ -56,4 +56,8 @@ echo -n "[for test]"
 diff <($vsm -f for.test) for.right
 print_result
 
+echo -n "[while test]"
+diff <($vsm -f while.test) while.right
+print_result
+
 
