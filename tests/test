@@ -60,4 +60,8 @@ echo -n "[while test]"
 diff <($vsm -f while.test) while.right
 print_result
 
+echo -n "[break test]"
+diff <($vsm -f break.test) break.right
+print_result
+
 

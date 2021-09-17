@@ -186,6 +186,14 @@ stmnt
 	jmpchain_nestout(j, $<int_value>2);
 }
 
+
+| BREAK ';'
+{
+	jmpchain_t *j = parser_get_jchain(yyp);
+	jmpchain_break(j, JUMP);
+}
+
+
 | error ';'
 {
 	yyerrok;
