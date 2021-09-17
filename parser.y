@@ -193,6 +193,12 @@ stmnt
 	jmpchain_break(j, JUMP);
 }
 
+| CONTI ';'
+{
+	jmpchain_t *j = parser_get_jchain(yyp);
+	jmpchain_conti(j);
+}
+
 
 | error ';'
 {
