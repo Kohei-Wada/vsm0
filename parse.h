@@ -23,6 +23,8 @@ void parser_inc_pc(parser_t *p);
 jmpchain_t *parser_get_jchain(parser_t *p);
 
 
+void parser_set_instr(parser_t *p, int pc, op_t op, int flag, int addr);
+int parser_back_patching(parser_t *p, int loc, int target);
 
 void parser_set_pc(parser_t *p, int value);
 int parser_sym_decl(parser_t *p, char *name, int init_value);

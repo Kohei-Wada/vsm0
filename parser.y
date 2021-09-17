@@ -45,9 +45,8 @@ extern void yy_set_yyin(FILE *f);
 program 
 : decl_list s_list
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, HALT, 0, 0); 
+	parser_set_instr(yyp, pc, HALT, 0, 0); 
 	parser_inc_pc(yyp);
 	YYACCEPT; 
 }
@@ -103,9 +102,8 @@ s_list
 stmnt
 : expr ';'
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, REMOVE, 0, 0); 
+	parser_set_instr(yyp, pc, REMOVE, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
@@ -119,28 +117,22 @@ stmnt
 
 | if_part 
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_back_patching(v, $1, pc);
+	parser_back_patching(yyp, $1, pc);
 }
 
 | if_part ELSE
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
 	$<int_value>$ = pc;
-
-	vsm_set_instr(v, pc, JUMP, 0, -1); 
+	parser_set_instr(yyp, pc, JUMP, 0, -1); 
 	parser_inc_pc(yyp);
-
-	vsm_back_patching(v, $1, pc + 1);
-
+	parser_back_patching(yyp, $1, pc + 1);
 }
 
 stmnt 
 {
-	vsm_t *v = parser_get_vsm(yyp);
-	vsm_back_patching(v, $<int_value>3, parser_get_pc(yyp));
+	parser_back_patching(yyp, $<int_value>3, parser_get_pc(yyp));
 }
 
 
@@ -152,25 +144,19 @@ stmnt
 
   tst_expr ';' 
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
 	jmpchain_t *j = parser_get_jchain(yyp);
-
-	vsm_set_instr(v, pc, BNE, 0, -1); 
+	parser_set_instr(yyp, pc, BNE, 0, -1); 
 	parser_inc_pc(yyp);
-
 	jmpchain_break(j, JUMP);
 }
 
   opt_expr ')'
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-
-	vsm_set_instr(v, pc, JUMP, 0, $3); 
+	parser_set_instr(yyp, pc, JUMP, 0, $3); 
 	parser_inc_pc(yyp);
-
-	vsm_back_patching(v, $6, pc + 1);
+	parser_back_patching(yyp, $6, pc + 1);
 }
 
 
@@ -193,17 +179,15 @@ stmnt
 write_stmnt
 : WRITE expr 
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, OUTPUT, 0, 0); 
+	parser_set_instr(yyp, pc, OUTPUT, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
 | write_stmnt ',' expr 
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, OUTPUT, 0, 0); 
+	parser_set_instr(yyp, pc, OUTPUT, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
@@ -211,17 +195,15 @@ write_stmnt
 read_stmnt
 : READ LHS 
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, INPUT, 0, 0); 
+	parser_set_instr(yyp, pc, INPUT, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
 | read_stmnt ',' LHS
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, INPUT, 0, 0); 
+	parser_set_instr(yyp, pc, INPUT, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
@@ -229,111 +211,91 @@ read_stmnt
 expr
 : LHS '=' expr
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, ASSGN, 0, 0); 
+	parser_set_instr(yyp, pc, ASSGN, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
 | expr '?' 
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-
 	$<int_value>$ = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, BEQ, 0, -1);
+	parser_set_instr(yyp, pc, BEQ, 0, -1);
 	parser_inc_pc(yyp);
 }
 
   expr ':'
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
 	$<int_value>$ = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, JUMP, 0, -1);
+	parser_set_instr(yyp, pc, JUMP, 0, -1);
 	parser_inc_pc(yyp);
-	vsm_back_patching(v, $<int_value>3, parser_get_pc(yyp));
+	parser_back_patching(yyp, $<int_value>3, parser_get_pc(yyp));
 }
   expr
 {
-	vsm_t *v = parser_get_vsm(yyp);
-	vsm_back_patching(v, $<int_value>6, parser_get_pc(yyp));
+	parser_back_patching(yyp, $<int_value>6, parser_get_pc(yyp));
 }
 
 
 | expr ADDOP expr       
 { 
-	vsm_t *v = parser_get_vsm(yyp);
-	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, $2, 0, 0); 
+	parser_set_instr(yyp, parser_get_pc(yyp), $2, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
 | expr MULOP expr       
 { 
-	vsm_t *v = parser_get_vsm(yyp);
-	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, $2, 0, 0); 
+	parser_set_instr(yyp, parser_get_pc(yyp), $2, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
 | expr LAND expr       
 { 
-	vsm_t *v = parser_get_vsm(yyp);
-	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, $2, 0, 0); 
+	parser_set_instr(yyp, parser_get_pc(yyp), $2, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
 | expr LOR expr       
 { 
-	vsm_t *v = parser_get_vsm(yyp);
-	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, $2, 0, 0); 
+	parser_set_instr(yyp, parser_get_pc(yyp), $2, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
 
 | expr RELOP expr       
 { 
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
 
-	vsm_set_instr(v, pc, COMP, 0, 0); 
-	vsm_set_instr(v, pc + 1, $2, 0, pc + 4);  
-	vsm_set_instr(v, pc + 2, PUSHI, 0, 0); 
-	vsm_set_instr(v, pc + 3, JUMP, 0, pc + 5); 
-	vsm_set_instr(v, pc + 4, PUSHI, 0, 1); 
-
+	parser_set_instr(yyp, pc, COMP, 0, 0); 
+	parser_set_instr(yyp, pc + 1, $2, 0, pc + 4);  
+	parser_set_instr(yyp, pc + 2, PUSHI, 0, 0); 
+	parser_set_instr(yyp, pc + 3, JUMP, 0, pc + 5); 
+	parser_set_instr(yyp, pc + 4, PUSHI, 0, 1); 
 	parser_set_pc(yyp, pc + 5);
 }
 
 | PPMM ID
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int addr = parser_sym_ref(yyp, $2);
 	int pc = parser_get_pc(yyp);
 
-	vsm_set_instr(v, pc, PUSH, 0, addr); 
-
-	vsm_set_instr(v, pc + 1, $1, 0, 0); 
-	vsm_set_instr(v, pc + 2, COPY, 0, 0); 
-	vsm_set_instr(v, pc + 3, POP, 0, addr); 
+	parser_set_instr(yyp, pc, PUSH, 0, addr); 
+	parser_set_instr(yyp, pc + 1, $1, 0, 0); 
+	parser_set_instr(yyp, pc + 2, COPY, 0, 0); 
+	parser_set_instr(yyp, pc + 3, POP, 0, addr); 
 	parser_set_pc(yyp, pc + 4);
 }
 
 | ID PPMM
 {
-
-	vsm_t *v = parser_get_vsm(yyp);
 	int addr = parser_sym_ref(yyp, $1);
 	int pc = parser_get_pc(yyp);
 
-	vsm_set_instr(v, pc, PUSH, 0, addr); 
-
-	vsm_set_instr(v, pc + 1, COPY, 0, 0); 
-	vsm_set_instr(v, pc + 2, $2, 0, 0); 
-	vsm_set_instr(v, pc + 3, POP, 0, addr); 
+	parser_set_instr(yyp, pc, PUSH, 0, addr); 
+	parser_set_instr(yyp, pc + 1, COPY, 0, 0); 
+	parser_set_instr(yyp, pc + 2, $2, 0, 0); 
+	parser_set_instr(yyp, pc + 3, POP, 0, addr); 
 	parser_set_pc(yyp, pc + 4);
 
 }
@@ -341,18 +303,16 @@ expr
 | ADDOP expr %prec UM
 {
 	if ($1 == SUB) {
-		vsm_t *v = parser_get_vsm(yyp);
 		int pc = parser_get_pc(yyp);
-		vsm_set_instr(v, pc, CSIGN, 0, 0); 
+		parser_set_instr(yyp, pc, CSIGN, 0, 0); 
 		parser_inc_pc(yyp);
 	}
 }
 
 | '!' expr
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, NOT, 0, 0); 
+	parser_set_instr(yyp, pc, NOT, 0, 0); 
 	parser_inc_pc(yyp);
 }
 
@@ -369,10 +329,7 @@ expr
 
 | NUM                   
 { 
-	vsm_t *v = parser_get_vsm(yyp);
-	int pc = parser_get_pc(yyp);
-
-	vsm_set_instr(v, pc, PUSHI, 0, $1); 
+	parser_set_instr(yyp, parser_get_pc(yyp), PUSHI, 0, $1); 
 	parser_inc_pc(yyp);
 }
 ;
@@ -382,10 +339,10 @@ expr
 if_part 
 : IF '(' expr ')'  
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
+
 	$<int_value>$ = pc;
-	vsm_set_instr(v, pc, BEQ, 0, -1);
+	parser_set_instr(yyp, pc, BEQ, 0, -1);
 	parser_inc_pc(yyp);
 }
 
@@ -402,9 +359,8 @@ opt_expr
 }
 | expr
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, REMOVE, 0, 0);
+	parser_set_instr(yyp, pc, REMOVE, 0, 0);
 	parser_inc_pc(yyp);
 	$$ = pc + 1;
 }
@@ -414,9 +370,8 @@ opt_expr
 tst_expr
 : 
 {
-	vsm_t *v = parser_get_vsm(yyp);
 	int pc = parser_get_pc(yyp);
-	vsm_set_instr(v, pc, REMOVE, 0, 0);
+	parser_set_instr(yyp, pc, REMOVE, 0, 0);
 	parser_inc_pc(yyp);
 	$$ = pc + 1;
 }

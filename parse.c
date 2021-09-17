@@ -100,6 +100,17 @@ void parser_set_pc(parser_t *p, int value)
 }
 
 
+void parser_set_instr(parser_t *p, int pc, op_t op, int flag, int addr)
+{
+	vsm_set_instr(p->vsm, pc, op, flag, addr);
+}
+
+
+int parser_back_patching(parser_t *p, int loc, int target)
+{
+	vsm_back_patching(p->vsm, loc, target);
+}
+
 
 int parser_read(parser_t *p)
 {

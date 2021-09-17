@@ -18,32 +18,44 @@ typedef struct jmpchain {
 } jmpchain_t;
 
 
-
 int jmpchain_get_csptr(jmpchain_t *j)
 {
 	return j->csptr;
 }
 
 
+static chain_node_t* jmpchain_get_node(jmpchain_t *j, int sptr)
+{
+	return &j->array[sptr];
+}
+
+
+static void jmpchain_set_node(jmpchain_t *j, chain_node_t *n)
+{
+	j->array[j->csptr] = *n;
+}
+
+
 void jmpchain_nestin(jmpchain_t *j, int st)
 {
 	j->csptr++;
-	j->array[j->csptr].stype = st;
-	j->array[j->csptr].bchain = -1;
-	j->array[j->csptr].cchain = -1;
+
+	chain_node_t n;
+	n.stype = st;
+	n.bchain = -1;
+	n.cchain = -1;
+	jmpchain_set_node(j, &n);
 }
 
 
 void jmpchain_break(jmpchain_t *j, int jc)
 {
-	vsm_t *v = parser_get_vsm(j->p);
-	int pc = parser_get_pc(j->p);
+	parser_t *p = j->p;
 
 	if (j->csptr > 0) {
-		vsm_set_instr(v, pc, jc, 0, j->array[j->csptr].bchain);
-		parser_inc_pc(j->p);
-
-		j->array[j->csptr].bchain = parser_get_pc(j->p) - 1;
+		parser_set_instr(p, parser_get_pc(p), jc, 0, j->array[j->csptr].bchain);
+		parser_inc_pc(p);
+		j->array[j->csptr].bchain = parser_get_pc(p) - 1;
 	}
 	else
 		yyerror("Illigal use of break statement");
@@ -53,17 +65,16 @@ void jmpchain_break(jmpchain_t *j, int jc)
 
 void jmpchain_nestout(jmpchain_t *j, int contp)
 {
-	vsm_t *v = parser_get_vsm(j->p);
-	vsm_back_patching(v, j->array[j->csptr].cchain, contp);
-	vsm_back_patching(v, j->array[j->csptr].bchain, parser_get_pc(j->p));
+	parser_t *p = j->p;
+	parser_back_patching(p, j->array[j->csptr].cchain, contp);
+	parser_back_patching(p, j->array[j->csptr].bchain, parser_get_pc(j->p));
 	j->csptr--;
 }
 
 
 void jmpchain_conti(jmpchain_t *j)
 {
-	vsm_t *v = parser_get_vsm(j->p);
-	int pc = parser_get_pc(j->p);
+	parser_t *p = j->p;
 	int i;
 
 	for (i = j->csptr; i > 0 && j->array[i].stype == 0; i--);
@@ -71,7 +82,8 @@ void jmpchain_conti(jmpchain_t *j)
 	if (i <= 0)
 		yyerror("Illegal use of the continue");
 	else {
-		vsm_set_instr(v, pc, JUMP, 0, j->array[i].cchain);
+		int pc = parser_get_pc(p);
+		parser_set_instr(p, pc, JUMP, 0, j->array[i].cchain);
 		j->array[i].cchain = pc;
 		parser_inc_pc(j->p);
 	}
