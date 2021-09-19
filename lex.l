@@ -48,6 +48,7 @@ other .
 "if"       { return IF; }
 "else"     { return ELSE; }
 "while"    { return WHILE; }
+"do"       { return DO;}
 "break"    { return BREAK; }
 "continue" { return CONTI; }
 "write"    { yylval.op = OUTPUT; return WRITE; }

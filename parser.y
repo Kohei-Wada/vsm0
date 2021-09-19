@@ -187,6 +187,34 @@ stmnt
 }
 
 
+| DO
+{
+	jmpchain_t *j = parser_get_jchain(yyp);
+	jmpchain_nestin(j, WHILE);
+	$<int_value>$ = parser_get_pc(yyp);
+}
+
+  stmnt 
+{
+	$<int_value>$ = parser_get_pc(yyp);
+}
+
+  WHILE  '(' expr ')'
+{
+	parser_set_instr(yyp, parser_get_pc(yyp), BNE, 0, $<int_value>2); 
+	parser_inc_pc(yyp);
+}
+
+';'
+
+{
+	jmpchain_t *j = parser_get_jchain(yyp);
+	jmpchain_nestout(j, $<int_value>4);
+}
+
+
+
+
 | BREAK ';'
 {
 	jmpchain_t *j = parser_get_jchain(yyp);
