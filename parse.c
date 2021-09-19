@@ -3,10 +3,10 @@
 #include <string.h>
 
 #include "parse.h"
+#include "vsm.h"
 #include "nmtable.h"
 #include "symtable.h"
 #include "instr.h"
-#include "vsm.h"
 #include "jmpchain.h"
 
 int yyparse();

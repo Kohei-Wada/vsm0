@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "jmpchain.h"
 #include "parse.h"
-#include "vsm.h"
+#include "instr.h"
 
 void yyerror(const char *);
 

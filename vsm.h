@@ -3,14 +3,13 @@
 
 #include "stack.h"
 #include "instr.h"
-#include "parse.h"
-
 
 #define ISEG_SIZE 1000
 #define DSEG_SIZE 1000
 #define FRAME_BOTTOM (DSEG_SIZE - 1)
 
 typedef struct vsm vsm_t;
+typedef struct parser parser_t;
 
 void vsm_set_freg(vsm_t *v, int flag);
 int vsm_get_freg(vsm_t *v);

@@ -3,7 +3,7 @@
 #include <string.h>
 #include "instr.h"
 #include "parse.h"
-#include "vsm.h"
+#include "instr.h"
 #include "jmpchain.h"
 #include "label.h"
 

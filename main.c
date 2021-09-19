@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 #include "vsm.h"
-
+#include "parse.h"
 
 
 int main(int argc, char **argv) 
