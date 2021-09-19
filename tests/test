@@ -68,3 +68,7 @@ echo -n "[continue test]"
 diff <($vsm -f conti.test) conti.right
 print_result
 
+echo -n "[switch test]"
+diff <($vsm -f swt.test) swt.right
+print_result
+

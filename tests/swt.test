@@ -1,0 +1,17 @@
+
+
+int i;
+
+for (i = 0; i < 10; ++i) {
+
+	switch(i) {
+		case 0: write 0; break;
+		case 1: write 1; break;
+		case 2: write 2; break;
+		case 3: write 3; break;
+		case 4: write 4; break;
+		case 5: write 5; break;
+		default: write 10; break;
+	}
+}
+

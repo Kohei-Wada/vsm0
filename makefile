@@ -3,7 +3,7 @@ CFLAGS = -g -O0 #-Wall
 CC = gcc
 
 OBJS_VSM = vsm.o instr.o stack.o main.o 
-OBJS_PARSER = lex.yy.o y.tab.o nmtable.o symtable.o parse.o jmpchain.o
+OBJS_PARSER = lex.yy.o y.tab.o nmtable.o symtable.o parse.o jmpchain.o label.o
 
 SRCS_VSM = $(OBJ_VSM: %c = %o)
 

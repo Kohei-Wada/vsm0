@@ -5,6 +5,7 @@
 #include "parse.h"
 #include "vsm.h"
 #include "jmpchain.h"
+#include "label.h"
 
 static parser_t *yyp = NULL;
 
@@ -107,6 +108,8 @@ stmnt
 	parser_inc_pc(yyp);
 }
 
+| lbl_stmnt
+
 | ';'
 
 | '{' s_list '}'
@@ -130,7 +133,7 @@ stmnt
 	parser_back_patching(yyp, $1, pc + 1);
 }
 
-stmnt 
+  stmnt 
 {
 	parser_back_patching(yyp, $<int_value>3, parser_get_pc(yyp));
 }
@@ -205,14 +208,12 @@ stmnt
 	parser_inc_pc(yyp);
 }
 
-';'
+  ';'
 
 {
 	jmpchain_t *j = parser_get_jchain(yyp);
 	jmpchain_nestout(j, $<int_value>4);
 }
-
-
 
 
 | BREAK ';'
@@ -233,6 +234,29 @@ stmnt
 	yyerrok;
 }
 
+
+| SWITCH '(' expr ')'
+{
+	int pc = parser_get_pc(yyp);
+	jmpchain_t *j = parser_get_jchain(yyp);
+
+	$<int_value>$ = pc;
+	parser_set_instr(yyp, pc, JUMP, 0, -1);
+	parser_inc_pc(yyp);
+
+	jmpchain_nestin(j, 0);
+	begin_switch();
+}
+
+  stmnt
+{
+	jmpchain_t *j = parser_get_jchain(yyp);
+	jmpchain_break(j, JUMP);
+	parser_back_patching(yyp, $<int_value>5, parser_get_pc(yyp));
+	end_switch(yyp);
+	jmpchain_nestout(j, 0);
+}
+;
 
 
 write_stmnt
@@ -440,6 +464,28 @@ tst_expr
 	$$ = parser_get_pc(yyp);
 }
 
+
+lbl_stmnt
+: CASE NUM ':' 
+{
+	case_label($2, yyp);
+}
+  stmnt
+
+| CASE ADDOP NUM ':'
+{
+	case_label($2 == SUB? -$3 : $3, yyp);
+}
+  stmnt
+
+| DEFAULT ':'
+{
+	default_label(yyp);
+}
+  stmnt
+;
+
+	
 
 LHS 
 : ID

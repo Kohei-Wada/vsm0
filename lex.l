@@ -48,6 +48,9 @@ other .
 "if"       { return IF; }
 "else"     { return ELSE; }
 "while"    { return WHILE; }
+"switch"   { return SWITCH;}
+"case"     { return CASE;}
+"default"  { return DEFAULT; }
 "do"       { return DO;}
 "break"    { return BREAK; }
 "continue" { return CONTI; }
